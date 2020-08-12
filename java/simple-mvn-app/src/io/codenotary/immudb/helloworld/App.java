@@ -16,8 +16,9 @@ limitations under the License.
 
 package io.codenotary.immudb.helloworld;
 
-import java.util.Base64;
+import java.io.IOException;
 
+import io.codenotary.immudb.FileRootHolder;
 import io.codenotary.immudb.ImmuClient;
 import io.codenotary.immudb.crypto.VerificationException;
 
@@ -25,26 +26,34 @@ public class App {
 
 	public static void main(String args[]) {
 		
-		ImmuClient client = ImmuClient.ImmuClientBuilder.newBuilder("localhost", 3322).build();
-	
-		client.login("immudb", "");
+		ImmuClient client = null;
 		
-		
-		client.set("hello", "immutable world!".getBytes());
-		
-
 		try {
+			
+			FileRootHolder rootHolder = FileRootHolder.newBuilder().setCurrentRootsFolder("./helloworld_immudb_roots").build();
+			
+			client = ImmuClient.newBuilder().setRootHolder(rootHolder).build();
+			
+			client.login("immudb", "");
+			
+			
+			client.set("hello", "immutable world!".getBytes());
+			
 			byte[] v = client.safeGet("hello");
 			
-			System.out.format("(%s, %s)", "hello", Base64.getEncoder().encodeToString(v));
+			System.out.format("(%s, %s)", "hello", new String(v));
 			
+		} catch (IOException e) {
+			e.printStackTrace();
 		} catch (VerificationException e) {
 			// TODO: tampering detected!
 			// This means the history of changes has been tampered
 			e.printStackTrace();
 			System.exit(1);
 		} finally {
-			client.logout();
+			if (client != null) {
+				client.logout();
+			}
 		}
 				
 	}
