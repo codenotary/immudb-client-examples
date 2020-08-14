@@ -30,11 +30,11 @@ public class App {
 		
 		try {
 			
-			FileRootHolder rootHolder = FileRootHolder.newBuilder().setCurrentRootsFolder("./helloworld_immudb_roots").build();
+			FileRootHolder rootHolder = FileRootHolder.newBuilder().setRootsFolder("./helloworld_immudb_roots").build();
 			
 			client = ImmuClient.newBuilder().setRootHolder(rootHolder).build();
 			
-			client.login("immudb", "");
+			client.login("immudb", "immudb");
 			
 			
 			client.set("hello", "immutable world!".getBytes());
