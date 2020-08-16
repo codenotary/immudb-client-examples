@@ -11,11 +11,11 @@ immudb4j artifacts are published at [GitHub Packages]
 [GitHub Packages]: https://docs.github.com/en/packages
 
 
-## Authenticating with a personal access token
+### Authenticating with a personal access token
 
 https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages
 
-## Configuring maven to use Github Packages
+### Configuring maven to use Github Packages
 
 Write into your ~/.m2/settings.xml file
 
