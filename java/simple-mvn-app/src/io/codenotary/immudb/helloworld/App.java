@@ -18,9 +18,9 @@ package io.codenotary.immudb.helloworld;
 
 import java.io.IOException;
 
-import io.codenotary.immudb.FileRootHolder;
-import io.codenotary.immudb.ImmuClient;
-import io.codenotary.immudb.crypto.VerificationException;
+import io.codenotary.immudb4j.FileRootHolder;
+import io.codenotary.immudb4j.ImmuClient;
+import io.codenotary.immudb4j.crypto.VerificationException;
 
 public class App {
 
@@ -32,7 +32,7 @@ public class App {
 			
 			FileRootHolder rootHolder = FileRootHolder.newBuilder().setRootsFolder("./helloworld_immudb_roots").build();
 			
-			client = ImmuClient.newBuilder().setRootHolder(rootHolder).build();
+			client = ImmuClient.newBuilder().setServerUrl("localhost").setServerPort(3322).setRootHolder(rootHolder).build();
 			
 			client.login("immudb", "immudb");
 			
