@@ -13,11 +13,13 @@ This samples use the [official immudb java client].
 
 [GitHub Packages]: https://docs.github.com/en/packages
 
-#### Authenticating with a personal access token
+Please refer to github documention for a detailed explanation about [Authenticating with a personal access token]. But basically you will need to do two things in order to download a maven dependency hosted in `Github Packages`, authenticate and add the GitHub repository into your maven settings:
 
-https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages
+[Authenticating with a personal access token]: https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages
 
-#### Configuring maven to use Github Packages
+1. Create Github personal access token: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
+
+2. Configure maven to use Github Packages
 
 Following info needs to be included into your `~/.m2/settings.xml` file. You will need to place your github username and personal token in the `github` server.
 
