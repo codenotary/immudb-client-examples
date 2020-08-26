@@ -1,27 +1,27 @@
 # immudb Java Examples
 
-This samples use the [official immudb java client].
+This sample uses the [official immudb Java client].
 
-[official immudb java client]: https://github.com/codenotary/immudb4j
+[Official immudb Java client]: https://github.com/codenotary/immudb4j
 
 `immudb` must be already running. Follow instructions to download and run it at https://immudb.io/docs/quickstart.html
 
 
-### Configuring maven to use Github Packages
+### Configuring Maven to use GitHub Packages
 
-`immudb4j` package is published at [GitHub Packages] and it requires authentication for download dependencies.
+`immudb4j` package is published at [GitHub Packages] and it requires authentication to download dependencies.
 
 [GitHub Packages]: https://docs.github.com/en/packages
 
-Please refer to github documention for a detailed explanation about [Authenticating with a personal access token]. But basically you will need to do two things in order to download a maven dependency hosted in `Github Packages`, authenticate and add the GitHub repository into your maven settings:
+Please refer to GitHub documentation for a detailed explanation about [Authenticating with a personal access token]. But basically you will need to do two things in order to download a Maven dependency hosted in `GitHub Packages`, authenticate and add the GitHub repository into your Maven settings:
 
 [Authenticating with a personal access token]: https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages
 
-1. Create Github personal access token: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
+1. Create GitHub personal access token: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
 
-2. Configure maven to use Github Packages
+2. Configure Maven to use GitHub Packages
 
-Following info needs to be included into your `~/.m2/settings.xml` file. You will need to place your github username and personal token in the `github` server.
+Following info needs to be included into your `~/.m2/settings.xml` file. You will need to place your GitHub username and personal token in the `github` server.
 
 ```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -61,4 +61,3 @@ Following info needs to be included into your `~/.m2/settings.xml` file. You wil
   </servers>
 </settings>
 ```
-
