@@ -1,4 +1,4 @@
-from immudb.client import ImmuClient
+from immudb.client import ImmuDBClient
 import string,random
 
 
@@ -6,7 +6,7 @@ import string,random
 def get_random_string(length):
     return ''.join(random.choice(string.printable) for i in range(length))
 
-ic = ImmuClient("localhost:3322")
+ic = ImmuDBClient("localhost:3322")
 ic.login("immudb","immudb")
 
 # let's fill a big dictionary:

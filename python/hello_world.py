@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from immudb.client import ImmuClient
+from immudb.client import ImmuDBClient
 
-ic=ImmuClient()
+ic=ImmuDBClient()
 ic.login("immudb","immudb")
 
 key="Hello".encode('utf8')
