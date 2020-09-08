@@ -1,4 +1,4 @@
-from immu.client import ImmuClient
+from immudb.client import ImmuClient
 import string,random
 
 

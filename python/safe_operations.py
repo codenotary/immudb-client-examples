@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from immu.client import ImmuClient
+from immudb.client import ImmuClient
 
 ic=ImmuClient()
 ic.login("immudb","immudb")
