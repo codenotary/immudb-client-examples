@@ -17,9 +17,14 @@ limitations under the License.
 package io.codenotary.immudb.helloworld;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import io.codenotary.immudb4j.FileRootHolder;
 import io.codenotary.immudb4j.ImmuClient;
+import io.codenotary.immudb4j.KV;
+import io.codenotary.immudb4j.KVList;
 import io.codenotary.immudb4j.crypto.VerificationException;
 
 public class App {
@@ -42,6 +47,35 @@ public class App {
 			byte[] v = client.safeGet("hello");
 			
 			System.out.format("(%s, %s)", "hello", new String(v));
+			
+
+			// Multi-key operations
+
+			KVList.KVListBuilder builder = KVList.newBuilder();
+
+		    builder.add("k123", new byte[]{1, 2, 3});
+		    builder.add("k321", new byte[]{3, 2, 1});
+
+		    KVList kvList = builder.build();
+
+		    client.setAll(kvList);
+
+
+		    List<String> keyList = new ArrayList<String>();
+
+		    keyList.add("k123");
+		    keyList.add("k321");
+		    keyList.add("k231");
+
+		    List<KV> result = client.getAll(keyList);
+
+		    for (KV kv : result) {
+		        byte[] key = kv.getKey();
+		        byte[] value = kv.getValue();
+
+		        System.out.format("(%s, %s)", new String(key), Arrays.toString(value));
+		    }
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
