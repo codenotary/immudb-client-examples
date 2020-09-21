@@ -1,0 +1,22 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Editor
+.vscode
+.idea
+*.iml
+*.swp
+
+# macOS
+.DS_Store
+
+# Binaries
+helloworld
+safehelloworld
+
+# Working files
+.root*
