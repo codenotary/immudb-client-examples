@@ -2,10 +2,10 @@
 
 This Git repository is a central repository for examples using official immudb clients in different languages.
 
+- Go https://docs.immudb.io/immudb/golang.html
 - Java https://github.com/codenotary/immudb4j
 - Python https://github.com/codenotary/immudb-py
 - Node.js https://github.com/codenotary/immudb-node
-
 
 We're actively working on the implementation of immudb clients for different languages.
 
