@@ -1,6 +1,6 @@
 # immudb Client Examples
 
-This Git repository is a central repository for examples using official immudb clients in different languages.
+This Git repository is a central repository for examples using official immudb clients in different programming languages.
 
 - Go https://docs.immudb.io/immudb/golang.html
 - Java https://github.com/codenotary/immudb4j
