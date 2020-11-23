@@ -1,0 +1,17 @@
+{
+    "name": "immudb-client-examples-node",
+    "preferGlobal": true,
+    "version": "0.0.1",
+    "description": "examples for immub-node SDK",
+    "license": "Apache 2.0",
+    "scripts": {
+        "auth-management": "node auth-management",
+        "batch-operations": "node batch-operations",
+        "database-management": "node database-management",
+        "database-operations": "node database-operations",
+        "user-management": "node auth-management"
+    },
+    "dependencies": {
+        "immudb-node": "1.2.8"
+    }
+}
