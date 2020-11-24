@@ -12,6 +12,6 @@
         "user-management": "node auth-management"
     },
     "dependencies": {
-        "immudb-node": "1.2.8"
+        "immudb-node": "1.0.8"
     }
 }
