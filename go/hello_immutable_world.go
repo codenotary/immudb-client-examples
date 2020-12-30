@@ -19,9 +19,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+
 	immuclient "github.com/codenotary/immudb/pkg/client"
 	"google.golang.org/grpc/metadata"
-	"log"
 )
 
 func main() {
@@ -31,21 +32,34 @@ func main() {
 	}
 	ctx := context.Background()
 	// login with default username and password
-	lr , err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 
 	// immudb provides multidatabase capabilities.
 	// token is used not only for authentication, but also to route calls to the correct database
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	if _, err := client.Set(ctx, []byte(`immudb`), []byte(`hello world`)); err != nil {
+	tx, err := client.Set(ctx, []byte(`hello`), []byte(`immutable world`))
+	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("Successfully committed key \"%s\" with value \"%s\" at tx %d\n", []byte(`hello`), []byte(`immutable world`), tx.Id)
 
-	if item, err := client.Get(ctx, []byte(`immudb`)); err != nil {
+	entry, err := client.Get(ctx, []byte(`hello`))
+	if err != nil {
 		log.Fatal(err)
-	}else{
-		// immudb sdk provides structured data. https://github.com/codenotary/immudb#structured-value
-		fmt.Printf("%s\n", item.Value.Payload)
 	}
+	fmt.Printf("Successfully retrieved entry %v\n", entry)
+
+	vtx, err := client.SafeSet(ctx, []byte(`welcome`), []byte(`immudb`))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Successfully committed and verified key \"%s\" with value \"%s\" at tx %d\n", []byte(`welcome`), []byte(`immudb`), vtx.Id)
+
+	ventry, err := client.SafeGet(ctx, []byte(`welcome`))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Successfully retrieved and verified entry %v\n", ventry)
 }
