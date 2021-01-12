@@ -106,6 +106,14 @@ func main() {
 	}
 	fmt.Printf("Scan - print out keys with values (e.g. \"%s\"):\n", prefix)
 	fmt.Printf("%v\n", scanresult.GetEntries())
+	
+	key0Ref := append([]byte("false positive"))
+	verifiedIndex, err := client.VerifiedSetReference(ctx, key0Ref, antigenData.keys[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("current state is : %v \n", verifiedIndex)
+
 
 	// get currentstate
 	fmt.Println("Current root - return the last merkle tree root and index stored locally")
