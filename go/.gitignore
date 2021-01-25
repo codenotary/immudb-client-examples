@@ -10,13 +10,16 @@
 .idea
 *.iml
 *.swp
+.idea/
 
 # macOS
 .DS_Store
 
 # Binaries
-helloworld
-safehelloworld
+*
+!/**/
+!*.*
 
 # Working files
 .root*
+.state*
