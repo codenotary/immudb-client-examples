@@ -19,7 +19,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/codenotary/immudb/pkg/api/schema"
 	"log"
+	"math"
 
 	immuclient "github.com/codenotary/immudb/pkg/client"
 	"google.golang.org/grpc/metadata"
@@ -31,37 +33,49 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	// login with default username and password
 	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	// immudb provides multidatabase capabilities.
-	// token is used not only for authentication, but also to route calls to the correct database
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	tx, err := client.Set(ctx, []byte(`hello`), []byte(`immutable world`))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Successfully committed key \"%s\" with value \"%s\" at tx %d\n", []byte(`hello`), []byte(`immutable world`), tx.Id)
 
-	entry, err := client.Get(ctx, []byte(`hello`))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Successfully retrieved entry %v\n", entry)
+	_, _ = client.Set(ctx, []byte(`aaa`), []byte(`item1`))
+	_, _ = client.Set(ctx, []byte(`bbb`), []byte(`item2`))
+	_, _ = client.Set(ctx, []byte(`abc`),[]byte(`item3`))
 
-	vtx, err := client.VerifiedSet(ctx, []byte(`welcome`), []byte(`immudb`))
-	if err != nil {
-		log.Fatal(err)
+	scanReq := &schema.ScanRequest{
+		Prefix:  []byte(`a`),
 	}
-	fmt.Printf("Successfully committed and verified key \"%s\" with value \"%s\" at tx %d\n", []byte(`welcome`), []byte(`immudb`), vtx.Id)
 
-	ventry, err := client.VerifiedGet(ctx, []byte(`welcome`))
+	list, err := client.Scan(ctx, scanReq)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully retrieved and verified entry %v\n", ventry)
+	fmt.Printf("%v\n", list)
+	scanReq1 := &schema.ScanRequest{
+		SeekKey: []byte{0xFF},
+		Prefix:  []byte(`a`),
+		Desc:    true,
+	}
+
+	list, err = client.Scan(ctx, scanReq1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%v\n", list)
+	scanReq2 := &schema.ScanRequest{
+		SeekKey: []byte{0xFF},
+		Desc:    true,
+		SinceTx: math.MaxUint64,
+		NoWait:  true,
+	}
+
+	list, err = client.Scan(ctx, scanReq2)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%v\n", list)
 }

@@ -41,27 +41,31 @@ func main() {
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	tx, err := client.Set(ctx, []byte(`hello`), []byte(`immutable world`))
+	meta , err := client.VerifiedSet(ctx, []byte(`key`), []byte(`val1`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully committed key \"%s\" with value \"%s\" at tx %d\n", []byte(`hello`), []byte(`immutable world`), tx.Id)
 
-	entry, err := client.Get(ctx, []byte(`hello`))
+	_ , err = client.VerifiedSet(ctx, []byte(`key`), []byte(`val2`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully retrieved entry %v\n", entry)
 
-	vtx, err := client.VerifiedSet(ctx, []byte(`welcome`), []byte(`immudb`))
+	ventry, err := client.VerifiedGet(ctx, []byte(`key`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully committed and verified key \"%s\" with value \"%s\" at tx %d\n", []byte(`welcome`), []byte(`immudb`), vtx.Id)
+	fmt.Printf("Successfully retrieved entry at %v with value %s\n", ventry.Tx, ventry.Value)
 
-	ventry, err := client.VerifiedGet(ctx, []byte(`welcome`))
+	ventry, err = client.VerifiedGetAt(ctx, []byte(`key`), meta.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully retrieved and verified entry %v\n", ventry)
+	fmt.Printf("Successfully retrieved entry at %v with value %s\n", ventry.Tx, ventry.Value)
+
+	ventry, err = client.VerifiedGetSince(ctx, []byte(`key`), 4)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Successfully retrieved entry at %v with value %s\n", ventry.Tx, ventry.Value)
 }

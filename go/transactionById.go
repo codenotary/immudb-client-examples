@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/codenotary/immudb/pkg/api/schema"
 	"log"
 
 	immuclient "github.com/codenotary/immudb/pkg/client"
@@ -41,27 +42,26 @@ func main() {
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	tx, err := client.Set(ctx, []byte(`hello`), []byte(`immutable world`))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Successfully committed key \"%s\" with value \"%s\" at tx %d\n", []byte(`hello`), []byte(`immutable world`), tx.Id)
+	setRequest := &schema.SetRequest{KVs: []*schema.KeyValue{
+		{Key: []byte("key1"), Value: []byte("val1")},
+		{Key: []byte("key2"), Value: []byte("val2")},
+	}}
 
-	entry, err := client.Get(ctx, []byte(`hello`))
+	meta, err := client.SetAll(ctx, setRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully retrieved entry %v\n", entry)
 
-	vtx, err := client.VerifiedSet(ctx, []byte(`welcome`), []byte(`immudb`))
+	tx , err := client.VerifiedTxByID(ctx, meta.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Successfully committed and verified key \"%s\" with value \"%s\" at tx %d\n", []byte(`welcome`), []byte(`immudb`), vtx.Id)
 
-	ventry, err := client.VerifiedGet(ctx, []byte(`welcome`))
-	if err != nil {
-		log.Fatal(err)
+	for _, entry := range tx.Entries {
+		item, err := client.VerifiedGetAt(ctx, entry.Key, meta.Id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("retrieved key %s and val %s\n", item.Key, item.Value)
 	}
-	fmt.Printf("Successfully retrieved and verified entry %v\n", ventry)
 }
