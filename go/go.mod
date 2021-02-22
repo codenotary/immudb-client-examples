@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/aead/chacha20poly1305 v0.0.0-20201124145622-1a5aba2a8b29 // indirect
-	github.com/codenotary/immudb v0.9.1-0.20210123170740-c606717c0c52
+	github.com/codenotary/immudb v0.9.2-0.20210218165443-053d9a7cb548
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect

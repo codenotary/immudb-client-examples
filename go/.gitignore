@@ -11,7 +11,7 @@
 *.iml
 *.swp
 .idea/
-
+*idea
 # macOS
 .DS_Store
 

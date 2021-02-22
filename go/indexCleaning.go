@@ -18,13 +18,11 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/codenotary/immudb/pkg/api/schema"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"log"
+
 	immuclient "github.com/codenotary/immudb/pkg/client"
 	"google.golang.org/grpc/metadata"
-	"log"
-	"math"
 )
 
 func main() {
@@ -33,43 +31,17 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	lr , err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
-	if err != nil{
+	// login with default username and password
+	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	if err != nil {
 		log.Fatal(err)
 	}
+	// immudb provides multidatabase capabilities.
+	// token is used not only for authentication, but also to route calls to the correct database
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
+	err = client.CleanIndex(ctx, &emptypb.Empty{})
 
-	zscanOpts1 := &schema.ZScanRequest{
-		Set:     []byte(`age1`),
-		SinceTx: math.MaxUint64,
-		NoWait: true,
-		MinScore: &schema.Score{Score: 36},
-	}
 
-	the36YearsOldList, err := client.ZScan(ctx, zscanOpts1)
-	if err != nil{
-		log.Fatal(err)
-	}
-	s, _ := json.MarshalIndent(the36YearsOldList, "", "\t")
-	fmt.Print(string(s))
-
-	oldestReq := &schema.ZScanRequest{
-		Set:           []byte(`age1`),
-		SeekKey:       []byte{0xFF},
-		SeekScore:     math.MaxFloat64,
-		SeekAtTx:      math.MaxUint64,
-		Limit:         1,
-		Desc:          true,
-		SinceTx:       math.MaxUint64,
-		NoWait:        true,
-	}
-
-	oldest, err := client.ZScan(ctx, oldestReq)
-	if err != nil{
-		log.Fatal(err)
-	}
-	s, _ = json.MarshalIndent(oldest, "", "\t")
-	fmt.Print(string(s))
 }
