@@ -12,7 +12,7 @@
         "user-management": "ts-node auth-management"
     },
     "dependencies": {
-        "immudb-node": "1.0.10",
+        "immudb-node": "1.0.10-rc.1",
         "ts-node": "latest",
         "typescript": "latest"
     }
