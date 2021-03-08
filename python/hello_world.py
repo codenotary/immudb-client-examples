@@ -3,10 +3,10 @@
 from immudb.client import ImmudbClient
 
 ic=ImmudbClient()
-ic.login("immudb","immudb")
+ic.login(username="immudb", password="immudb")
 
 key="Hello".encode('utf8')
-value="Immutable world!".encode('utf8')
+value="Immutable World!".encode('utf8')
 
 # set a key/value pair
 ic.set(key,value)
@@ -16,5 +16,3 @@ readback=ic.get(key)
 saved_value=readback.value.decode('utf8')
 print("Hello",saved_value)
 
-# you have the timestamp of the set that inserted the value
-print("The set was made in timestamp",readback.timestamp)
