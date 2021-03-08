@@ -1,0 +1,44 @@
+name: immudb examples Go
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - '**'
+
+jobs:
+  runner-job:
+    runs-on: ubuntu-latest
+    services:
+      immudb:
+        image: codenotary/immudb:latest
+        ports:
+        - 3322:3322
+        options: >-
+          --health-cmd "immuadmin status"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: Setup runner for Go
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install golang
+    - uses: actions/checkout@v1
+    - name: Run examples
+      run: |
+        for f in $(ls *.go | grep -v signature)
+        do
+         echo "Processing $f"
+         go run "$f"
+        done
+      working-directory: ./go
+    - name: Run linter (go fmt)
+      run : |
+        for f in *.go
+        do
+          echo "Checking if $f is go fmt'ed"
+          test -z $(go fmt "$f")
+        done
+      working-directory: ./go

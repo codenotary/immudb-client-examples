@@ -1,0 +1,42 @@
+name: immudb examples Python
+
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - '**'
+
+jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    services:
+      immudb:
+        image: codenotary/immudb:latest
+        ports:
+        - 3322:3322
+        options: --health-cmd "immuadmin status" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup runner for Python
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip
+    - name: Install Python SDK
+      run: |
+        pip install immudb-py
+    - name: Run examples
+      run: |
+        for f in *.py
+        do
+         echo "Processing $f"
+         python "$f"
+        done
+      working-directory: ./python
+    - name: Run linter (pep8)
+      run : |
+        pip install autopep8
+        export PATH="$HOME/.local/bin":$PATH
+        autopep8 --exit-code --diff *.py
+      working-directory: ./python
