@@ -1,19 +1,32 @@
 # immudb Java Examples
 
-This sample uses the [official immudb Java client].
+These samples use the [official immudb Java client] (`immudb4j`).
 
 [Official immudb Java client]: https://github.com/codenotary/immudb4j
 
-`immudb` must be already running. Follow instructions to download and run it at https://immudb.io/docs/quickstart.html
+Besides what exists here, you can find additional code snippets and examples in:
+- [SDKs API](https://docs.immudb.io/master/sdks-api.html) documentation page
+- [immudb4j Unit Tests](https://github.com/codenotary/immudb4j/tree/master/src/test/java/io/codenotary/immudb4j)
 
+<br/>
+
+Please note that you need to have access to an `immudb` server in order to be able to use these examples.<br/>
+But that's very easy: just take a look at [immudb Quickstart](https://docs.immudb.io/master/quickstart.html) to know how to download and run it locally.
+
+`immudb4j` is published on both [Maven Central](https://search.maven.org/artifact/io.codenotary/immudb4j) and GitHub Packages. 
+Further details on installing it as a dependency can be found in [immudb4j](https://github.com/codenotary/immudb4j) repo itself. 
+The classic Maven setup is already popular, therefore the section below describes the new GitHub Packages alternative, if interested.
+
+<br/>
 
 ### Configuring Maven to use GitHub Packages
 
-`immudb4j` package is published at [GitHub Packages] and it requires authentication to download dependencies.
+using `immudb4j` package is published at [GitHub Packages] and it requires authentication to download dependencies.
 
 [GitHub Packages]: https://docs.github.com/en/packages
 
-Please refer to GitHub documentation for a detailed explanation about [Authenticating with a personal access token]. But basically you will need to do two things in order to download a Maven dependency hosted in `GitHub Packages`, authenticate and add the GitHub repository into your Maven settings:
+Please refer to GitHub documentation for a detailed explanation about [Authenticating with a personal access token]. 
+Basically, you will need to do two things in order to download a Maven dependency hosted in `GitHub Packages`: authenticate and add the GitHub repository into your Maven settings.
 
 [Authenticating with a personal access token]: https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages
 
@@ -46,7 +59,7 @@ Following info needs to be included into your `~/.m2/settings.xml` file. You wil
         <repository>
           <id>github</id>
           <name>GitHub codenotary/immudb4j Apache Maven Packages</name>
-          <url>https://maven.pkg.github.com/codenotary/immudb4j</url>
+          <url>https://maven.pkg.github.com/io/codenotary/immudb4j</url>
         </repository>
       </repositories>
     </profile>

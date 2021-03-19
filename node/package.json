@@ -1,17 +1,19 @@
 {
     "name": "immudb-client-examples-node",
     "preferGlobal": true,
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "examples for immub-node SDK",
     "license": "Apache 2.0",
     "scripts": {
-        "auth-management": "node auth-management",
-        "batch-operations": "node batch-operations",
-        "database-management": "node database-management",
-        "database-operations": "node database-operations",
-        "user-management": "node auth-management"
+        "auth-management": "ts-node auth-management",
+        "batch-operations": "ts-node batch-operations",
+        "database-management": "ts-node database-management",
+        "database-operations": "ts-node database-operations",
+        "user-management": "ts-node auth-management"
     },
     "dependencies": {
-        "immudb-node": "1.0.8"
+        "immudb-node": "1.0.10-rc.3",
+        "ts-node": "latest",
+        "typescript": "latest"
     }
 }

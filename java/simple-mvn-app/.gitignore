@@ -4,3 +4,8 @@
 .project
 .settings/
 /bin/
+
+.idea
+*.iml
+
+immudb_states

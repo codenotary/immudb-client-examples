@@ -4,7 +4,7 @@ import itertools
 import time
 
 SIZE=5000000
-CHUNKSIZE=5000
+CHUNKSIZE=1000
 
 def chunked(it, size):
     it = iter(it)
