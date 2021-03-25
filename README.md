@@ -1,6 +1,6 @@
 # immudb Client Examples
 
-[![immudb examples CLI](https://github.com/codenotary/immudb-client-examples/actions/workflows/cli.yml/badge.svg)](https://github.com/codenotary/immudb-client-examples/actions/workflows/cli.yml) [![immudb examples Go](https://github.com/codenotary/immudb-client-examples/actions/workflows/go.yml/badge.svg)](https://github.com/codenotary/immudb-client-examples/actions/workflows/go.yml) [![immudb examples Python](https://github.com/dmacvicar/immudb-client-examples/actions/workflows/python.yml/badge.svg)](https://github.com/dmacvicar/immudb-client-examples/actions/workflows/python.yml)
+[![CLI Examples](https://github.com/codenotary/immudb-client-examples/actions/workflows/cli.yml/badge.svg)](https://github.com/codenotary/immudb-client-examples/actions/workflows/cli.yml) [![Go Examples](https://github.com/codenotary/immudb-client-examples/actions/workflows/go.yml/badge.svg)](https://github.com/codenotary/immudb-client-examples/actions/workflows/go.yml) [![Python Examples](https://github.com/dmacvicar/immudb-client-examples/actions/workflows/python.yml/badge.svg)](https://github.com/dmacvicar/immudb-client-examples/actions/workflows/python.yml)
 
 This Git repository is a central repository for examples using official immudb clients in different programming languages.
 
