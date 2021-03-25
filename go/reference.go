@@ -37,7 +37,7 @@ func main() {
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	_, err = client.Set(ctx, []byte(`firstKey`),[]byte(`firstValue`))
+	_, err = client.Set(ctx, []byte(`firstKey`), []byte(`firstValue`))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func main() {
 	}
 	fmt.Printf("%v\n", firstItem)
 
-	_, err = client.Set(ctx, []byte(`secondKey`),[]byte(`secondValue`))
+	_, err = client.Set(ctx, []byte(`secondKey`), []byte(`secondValue`))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,32 +63,31 @@ func main() {
 	}
 	fmt.Printf("%v\n", reference)
 
-
 	secondItem, err := client.Get(ctx, []byte(`mySecondTag`))
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("%v\n", secondItem)
 
-	meta, err := client.Set(ctx, []byte(`secondKey`),[]byte(`secondValue`))
+	meta, err := client.Set(ctx, []byte(`secondKey`), []byte(`secondValue`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	_ , err = client.Set(ctx, []byte(`secondKey`),[]byte(`thirdValue`))
+	_, err = client.Set(ctx, []byte(`secondKey`), []byte(`thirdValue`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	reference, err = client.VerifiedSetReferenceAt(ctx, []byte(`myThirdTag`), []byte(`secondKey`), meta.Id )
+	reference, err = client.VerifiedSetReferenceAt(ctx, []byte(`myThirdTag`), []byte(`secondKey`), meta.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("%v\n", reference)
 
-	_, err = client.Set(ctx, []byte(`secondKey`),[]byte(`secondValue`))
+	_, err = client.Set(ctx, []byte(`secondKey`), []byte(`secondValue`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = client.Set(ctx, []byte(`secondKey`),[]byte(`thirdValue`))
+	_, err = client.Set(ctx, []byte(`secondKey`), []byte(`thirdValue`))
 	if err != nil {
 		log.Fatal(err)
 	}

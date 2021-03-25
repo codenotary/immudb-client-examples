@@ -40,13 +40,12 @@ func main() {
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-
 	_, _ = client.Set(ctx, []byte(`aaa`), []byte(`item1`))
 	_, _ = client.Set(ctx, []byte(`bbb`), []byte(`item2`))
-	_, _ = client.Set(ctx, []byte(`abc`),[]byte(`item3`))
+	_, _ = client.Set(ctx, []byte(`abc`), []byte(`item3`))
 
 	scanReq := &schema.ScanRequest{
-		Prefix:  []byte(`a`),
+		Prefix: []byte(`a`),
 	}
 
 	list, err := client.Scan(ctx, scanReq)

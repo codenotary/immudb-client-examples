@@ -41,12 +41,12 @@ func main() {
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	meta , err := client.VerifiedSet(ctx, []byte(`key`), []byte(`val1`))
+	meta, err := client.VerifiedSet(ctx, []byte(`key`), []byte(`val1`))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_ , err = client.VerifiedSet(ctx, []byte(`key`), []byte(`val2`))
+	_, err = client.VerifiedSet(ctx, []byte(`key`), []byte(`val2`))
 	if err != nil {
 		log.Fatal(err)
 	}

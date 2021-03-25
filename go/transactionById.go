@@ -52,7 +52,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	tx , err := client.VerifiedTxByID(ctx, meta.Id)
+	tx, err := client.VerifiedTxByID(ctx, meta.Id)
 	if err != nil {
 		log.Fatal(err)
 	}

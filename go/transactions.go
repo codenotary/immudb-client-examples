@@ -41,8 +41,8 @@ func main() {
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-	idx, _ := client.Set(ctx, []byte(`persistedKey`),[]byte(`persistedVal`))
-	_, _ = client.Set(ctx, []byte(`persistedKey`),[]byte(`persistedVal2`))
+	idx, _ := client.Set(ctx, []byte(`persistedKey`), []byte(`persistedVal`))
+	_, _ = client.Set(ctx, []byte(`persistedKey`), []byte(`persistedVal2`))
 
 	// Ops payload
 	aOps := &schema.ExecAllRequest{
@@ -77,18 +77,18 @@ func main() {
 		},
 	}
 
-	idx , err = client.ExecAll(ctx, aOps)
+	idx, err = client.ExecAll(ctx, aOps)
 	if err != nil {
 		log.Fatal(err)
 	}
 	zscanOpts1 := &schema.ZScanRequest{
 		Set:     []byte(`mySet`),
 		SinceTx: math.MaxUint64,
-		NoWait: true,
+		NoWait:  true,
 	}
 
 	list, err := client.ZScan(ctx, zscanOpts1)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	s, _ := json.MarshalIndent(list, "", "\t")
