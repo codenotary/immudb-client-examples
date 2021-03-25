@@ -1,8 +1,11 @@
 # immudb Client Examples
 
+[![immudb examples CLI](https://github.com/codenotary/immudb-client-examples/actions/workflows/cli.yml/badge.svg)](https://github.com/codenotary/immudb-client-examples/actions/workflows/cli.yml) [![immudb examples Go](https://github.com/codenotary/immudb-client-examples/actions/workflows/go.yml/badge.svg)](https://github.com/codenotary/immudb-client-examples/actions/workflows/go.yml) [![immudb examples Python](https://github.com/dmacvicar/immudb-client-examples/actions/workflows/python.yml/badge.svg)](https://github.com/dmacvicar/immudb-client-examples/actions/workflows/python.yml)
+
 This Git repository is a central repository for examples using official immudb clients in different programming languages.
-> Go examples are updated with 0.9.* immudb version
->
+
+Examples (Python, Go, CLI) are tested against [immudb:latest](https://hub.docker.com/r/codenotary/immudb) container.
+
 More documentation at:
 - [Go](https://docs.immudb.io/master/) 
 - [Java](https://github.com/codenotary/immudb4j)
