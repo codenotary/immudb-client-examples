@@ -32,7 +32,8 @@ jobs:
         do
          echo "Processing $f"
          python "$f"
-         sleep 1
+         # force index to be up to date
+         python -c "from immudb.client import ImmudbClient; c= ImmudbClient(); c.login('immudb', 'immudb'); s = c.currentState(); c.scan(None, b'dummy', True, 1, sinceTx=s.txId)"
         done
       working-directory: ./python
     - name: Run linter (pep8)
