@@ -32,6 +32,7 @@ jobs:
         do
          echo "Processing $f"
          python "$f"
+         sleep 1
         done
       working-directory: ./python
     - name: Run linter (pep8)
