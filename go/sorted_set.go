@@ -33,41 +33,40 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	lr , err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
-	if err != nil{
+	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	if err != nil {
 		log.Fatal(err)
 	}
 	md := metadata.Pairs("authorization", lr.Token)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
-
 	zscanOpts1 := &schema.ZScanRequest{
-		Set:     []byte(`age1`),
-		SinceTx: math.MaxUint64,
-		NoWait: true,
+		Set:      []byte(`age1`),
+		SinceTx:  math.MaxUint64,
+		NoWait:   true,
 		MinScore: &schema.Score{Score: 36},
 	}
 
 	the36YearsOldList, err := client.ZScan(ctx, zscanOpts1)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	s, _ := json.MarshalIndent(the36YearsOldList, "", "\t")
 	fmt.Print(string(s))
 
 	oldestReq := &schema.ZScanRequest{
-		Set:           []byte(`age1`),
-		SeekKey:       []byte{0xFF},
-		SeekScore:     math.MaxFloat64,
-		SeekAtTx:      math.MaxUint64,
-		Limit:         1,
-		Desc:          true,
-		SinceTx:       math.MaxUint64,
-		NoWait:        true,
+		Set:       []byte(`age1`),
+		SeekKey:   []byte{0xFF},
+		SeekScore: math.MaxFloat64,
+		SeekAtTx:  math.MaxUint64,
+		Limit:     1,
+		Desc:      true,
+		SinceTx:   math.MaxUint64,
+		NoWait:    true,
 	}
 
 	oldest, err := client.ZScan(ctx, oldestReq)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	s, _ = json.MarshalIndent(oldest, "", "\t")

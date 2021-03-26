@@ -63,13 +63,13 @@ func main() {
 		Desc:      false,
 	}
 
-	txs , err := client.TxScan(ctx, txRequest)
+	txs, err := client.TxScan(ctx, txRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, tx := range txs.GetTxs() {
-		fmt.Printf("retrieved in ASC tx %d \n", tx.Metadata.Id )
+		fmt.Printf("retrieved in ASC tx %d \n", tx.Metadata.Id)
 	}
 	txRequest = &schema.TxScanRequest{
 		InitialTx: 2,
@@ -77,7 +77,7 @@ func main() {
 		Desc:      true,
 	}
 
-	txs , err = client.TxScan(ctx, txRequest)
+	txs, err = client.TxScan(ctx, txRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,6 +91,5 @@ func main() {
 			fmt.Printf("retrieved key %s and val %s\n", item.Key, item.Value)
 		}
 	}
-
 
 }

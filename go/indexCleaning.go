@@ -43,5 +43,4 @@ func main() {
 
 	err = client.CleanIndex(ctx, &emptypb.Empty{})
 
-
 }

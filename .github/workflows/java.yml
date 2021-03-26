@@ -1,0 +1,24 @@
+name: immudb examples Java
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - '**'
+jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    services:
+      immudb:
+        image: codenotary/immudb:latest
+        ports:
+        - 3322:3322
+        options: --health-cmd "immuadmin status" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run examples
+      uses: docker://gradle:jdk11
+      with:
+        entrypoint: /bin/bash
+        args: -c "for dir in $GITHUB_WORKSPACE/java/*/; do pushd $dir && gradle run && popd; done"

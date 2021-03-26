@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'io.codenotary.immudb.helloworld.App'
+
+jar {
+    baseName = 'hello-world'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    implementation "io.codenotary:immudb4j:0.9.0.4"
+}
+

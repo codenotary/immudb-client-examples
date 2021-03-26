@@ -26,13 +26,13 @@ import (
 )
 
 func main() {
-	c, err := client.NewImmuClient(client.DefaultOptions().WithServerSigningPubKey("../../immudb/src/wrong.public.key"))
+	c, err := client.NewImmuClient(client.DefaultOptions().WithServerSigningPubKey("../example-public.key"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
 
-	lr , err := c.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	lr, err := c.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 	if err != nil {
 		log.Fatal(err)
 	}
