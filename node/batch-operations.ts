@@ -1,5 +1,5 @@
 import ImmudbClient from 'immudb-node'
-import Parameters from 'immudb-node/types/parameters'
+import Parameters from 'immudb-node/dist/types/parameters'
 
 const IMMUDB_HOST = '127.0.0.1'
 const IMMUDB_PORT = 3322

@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import ImmudbClient from 'immudb-node'
-import Parameters from 'immudb-node/types/parameters'
-import { USER_ACTION, USER_PERMISSION, } from 'immudb-node/types/user'
+import Parameters from 'immudb-node/dist/types/parameters'
+import { USER_ACTION, USER_PERMISSION } from 'immudb-node/dist/types/user'
 import util from 'util'
 
 const IMMUDB_HOST = '127.0.0.1'
