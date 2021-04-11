@@ -19,3 +19,9 @@ The most complete client is implemented in Golang, and it's used to build immucl
 immudb can easily be used from any language by means of [immugw].
 
 [immugw]: https://immudb.io/docs/immugw/
+
+# Playground
+
+To learn interactively and get started with immudb from the command line and programming languages, visit the [immudb Playground](https://play.codenotary.com).
+
+[![The immudb Playground](img/playground.png)](https://play.codenotary.com)
