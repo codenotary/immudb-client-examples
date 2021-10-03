@@ -11,4 +11,5 @@ After installing the dependencies using `npm install` you should be ready to run
 - `npm run batch-operations`
 - `npm run database-management`
 - `npm run database-operations`
+- `npm run database-sql-operations`
 - `npm run user-management`

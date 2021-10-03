@@ -1,7 +1,7 @@
 {
     "name": "immudb-client-examples-node",
     "preferGlobal": true,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Examples for immudb-node SDK",
     "license": "Apache 2.0",
     "scripts": {
@@ -9,10 +9,11 @@
         "user-management": "ts-node user-management",
         "database-management": "ts-node database-management",
         "database-operations": "ts-node database-operations",
+        "database-sql-operations": "ts-node database-sql-operations",
         "batch-operations": "ts-node batch-operations"
     },
     "dependencies": {
-        "immudb-node": "1.0.10-rc.7",
+        "immudb-node": "1.1.0-rc.1",
         "ts-node": "latest",
         "typescript": "latest"
     }
