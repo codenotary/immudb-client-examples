@@ -10,7 +10,7 @@
 .idea
 *.iml
 *.swp
-.idea/
+.idea
 *idea
 # macOS
 .DS_Store
@@ -23,3 +23,4 @@
 # Working files
 .root*
 .state*
+/.idea/
