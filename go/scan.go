@@ -24,7 +24,6 @@ import (
 	"math"
 
 	immuclient "github.com/codenotary/immudb/pkg/client"
-	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -33,13 +32,10 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	_, err = client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	md := metadata.Pairs("authorization", lr.Token)
-	ctx = metadata.NewOutgoingContext(context.Background(), md)
-
 	_, _ = client.Set(ctx, []byte(`aaa`), []byte(`item1`))
 	_, _ = client.Set(ctx, []byte(`bbb`), []byte(`item2`))
 	_, _ = client.Set(ctx, []byte(`abc`), []byte(`item3`))

@@ -6,7 +6,6 @@ import (
 
 	"github.com/codenotary/immudb/pkg/api/schema"
 	"github.com/codenotary/immudb/pkg/client"
-	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -18,13 +17,10 @@ func main() {
 
 	ctx := context.Background()
 
-	lr, err := c.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	_, err = c.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	md := metadata.Pairs("authorization", lr.Token)
-	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	_, err = c.SQLExec(ctx, `
 		BEGIN TRANSACTION
