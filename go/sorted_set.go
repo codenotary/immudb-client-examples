@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"github.com/codenotary/immudb/pkg/api/schema"
 	immuclient "github.com/codenotary/immudb/pkg/client"
-	"google.golang.org/grpc/metadata"
 	"log"
 	"math"
 )
@@ -33,16 +32,42 @@ func main() {
 		log.Fatal(err)
 	}
 	ctx := context.Background()
-	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	_, err = client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 	if err != nil {
 		log.Fatal(err)
 	}
-	md := metadata.Pairs("authorization", lr.Token)
-	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
+	i1, err := client.Set(ctx, []byte(`user1`), []byte(`user1@mail.com`))
+	if err != nil{
+		log.Fatal(err)
+	}
+	i2, err := client.Set(ctx, []byte(`user2`), []byte(`user2@mail.com`))
+	if err != nil{
+		log.Fatal(err)
+	}
+	i3, err := client.Set(ctx, []byte(`user3`), []byte(`user3@mail.com`))
+	if err != nil{
+		log.Fatal(err)
+	}
+	i4, err := client.Set(ctx, []byte(`user3`), []byte(`another-user3@mail.com`))
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	if _ , err = client.ZAddAt(ctx,  []byte(`age`), 25, []byte(`user1`), i1.Id); err != nil {
+		log.Fatal(err)
+	}
+	if _ , err = client.ZAddAt(ctx,  []byte(`age`), 36, []byte(`user2`), i2.Id); err != nil {
+		log.Fatal(err)
+	}
+	if _ , err = client.ZAddAt(ctx,  []byte(`age`), 36, []byte(`user3`), i3.Id); err != nil {
+		log.Fatal(err)
+	}
+	if _ , err = client.ZAddAt(ctx,  []byte(`age`), 54, []byte(`user3`), i4.Id); err != nil {
+		log.Fatal(err)
+	}
 	zscanOpts1 := &schema.ZScanRequest{
-		Set:      []byte(`age1`),
-		SinceTx:  math.MaxUint64,
+		Set:      []byte(`age`),
 		NoWait:   true,
 		MinScore: &schema.Score{Score: 36},
 	}
@@ -55,7 +80,7 @@ func main() {
 	fmt.Print(string(s))
 
 	oldestReq := &schema.ZScanRequest{
-		Set:       []byte(`age1`),
+		Set:       []byte(`age`),
 		SeekKey:   []byte{0xFF},
 		SeekScore: math.MaxFloat64,
 		SeekAtTx:  math.MaxUint64,

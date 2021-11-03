@@ -22,7 +22,6 @@ import (
 	"log"
 
 	immuclient "github.com/codenotary/immudb/pkg/client"
-	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -32,14 +31,11 @@ func main() {
 	}
 	ctx := context.Background()
 	// login with default username and password
-	lr, err := client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	_, err = client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
 	if err != nil {
 		log.Fatal(err)
 	}
 	// immudb provides multidatabase capabilities.
-	// token is used not only for authentication, but also to route calls to the correct database
-	md := metadata.Pairs("authorization", lr.Token)
-	ctx = metadata.NewOutgoingContext(context.Background(), md)
 
 	tx, err := client.Set(ctx, []byte(`hello`), []byte(`immutable world`))
 	if err != nil {
