@@ -15,11 +15,6 @@ jobs:
         image: codenotary/immudb:latest
         ports:
         - 3322:3322
-        options: >-
-          --health-cmd "immuadmin status"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
     - name: Setup runner for Node
       run: |
