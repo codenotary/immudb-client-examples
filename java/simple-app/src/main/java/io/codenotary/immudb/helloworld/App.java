@@ -37,7 +37,7 @@ public class App {
                     .build();
 
             client = ImmuClient.newBuilder()
-                    .withServerUrl("immudb")
+                    .withServerUrl("localhost")
                     .withServerPort(3322)
                     .withStateHolder(stateHolder)
                     .build();
