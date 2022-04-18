@@ -13,36 +13,50 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 package main
 
 import (
 	"context"
 	"fmt"
-	"github.com/codenotary/immudb/pkg/client"
+
+	immudb "github.com/codenotary/immudb/pkg/client"
 	"github.com/codenotary/immudb/pkg/stdlib"
 )
 
+// Simple app using official go sdk for immudb
+
+// go run main.go
+
 func main() {
-	opts := client.DefaultOptions()
+	opts := immudb.DefaultOptions()
 	opts.Username = "immudb"
 	opts.Password = "immudb"
 	opts.Database = "defaultdb"
-
 
 	db := stdlib.OpenDB(opts)
 	defer db.Close()
 
 	_, err := db.ExecContext(context.TODO(), "CREATE TABLE myTable(id INTEGER, name VARCHAR, PRIMARY KEY id)")
+	if err != nil {
+		panic(err)
+	}
 
 	_, err = db.ExecContext(context.TODO(), "INSERT INTO myTable (id, name) VALUES (1, 'immu1')")
+	if err != nil {
+		panic(err)
+	}
 
 	rows, err := db.QueryContext(context.TODO(), "SELECT * FROM myTable")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
 
 	var id uint64
 	var name string
-	defer rows.Close()
+
 	rows.Next()
+
 	err = rows.Scan(&id, &name)
 	if err != nil {
 		panic(err)

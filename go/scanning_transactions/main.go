@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/codenotary/immudb/pkg/api/schema"
 	immudb "github.com/codenotary/immudb/pkg/client"
 )
 
@@ -42,19 +43,59 @@ func main() {
 	// ensure connection is closed
 	defer client.CloseSession(context.Background())
 
-	// write an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	hdr, err := client.VerifiedSet(context.Background(), []byte("hello"), []byte("immutable world"))
+	// write some entries
+	_, err = client.Set(context.Background(), []byte("key1"), []byte("value1"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully set a verified entry: ('%s', '%s') @ tx %d\n", []byte("hello"), []byte("immutable world"), hdr.Id)
 
-	// read an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	entry, err := client.VerifiedGet(context.Background(), []byte("hello"))
+	_, err = client.SetAll(context.Background(), &schema.SetRequest{
+		KVs: []*schema.KeyValue{
+			{
+				Key:   []byte("key1"),
+				Value: []byte("value1"),
+			},
+			{
+				Key:   []byte("key2"),
+				Value: []byte("value2"),
+			},
+		},
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully got verified entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+
+	hdr, err := client.SetAll(context.Background(), &schema.SetRequest{
+		KVs: []*schema.KeyValue{
+			{
+				Key:   []byte("key1"),
+				Value: []byte("value1"),
+			},
+			{
+				Key:   []byte("key2"),
+				Value: []byte("value2"),
+			},
+			{
+				Key:   []byte("key3"),
+				Value: []byte("value3"),
+			},
+		},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// scan over above committed transactions in descending order
+	resp, err := client.TxScan(context.Background(), &schema.TxScanRequest{
+		InitialTx: hdr.Id,
+		Limit:     3,
+		Desc:      true,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, tx := range resp.Txs {
+		fmt.Printf("Got tx %d with %d entries\n", tx.Header.Id, tx.Header.Nentries)
+	}
 }

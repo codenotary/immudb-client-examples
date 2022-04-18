@@ -43,18 +43,16 @@ func main() {
 	defer client.CloseSession(context.Background())
 
 	// write an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	hdr, err := client.VerifiedSet(context.Background(), []byte("hello"), []byte("immutable world"))
+	_, err = client.Set(context.Background(), []byte("my key"), []byte("my value"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully set a verified entry: ('%s', '%s') @ tx %d\n", []byte("hello"), []byte("immutable world"), hdr.Id)
+	fmt.Printf("Sucessfully set an entry: ('%s', '%s')\n", []byte("my key"), []byte("my value"))
 
 	// read an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	entry, err := client.VerifiedGet(context.Background(), []byte("hello"))
+	entry, err := client.Get(context.Background(), []byte("my key"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully got verified entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+	fmt.Printf("Sucessfully got entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
 }

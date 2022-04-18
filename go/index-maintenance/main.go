@@ -42,19 +42,10 @@ func main() {
 	// ensure connection is closed
 	defer client.CloseSession(context.Background())
 
-	// write an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	hdr, err := client.VerifiedSet(context.Background(), []byte("hello"), []byte("immutable world"))
+	// partial index clean-up is performed (unreferenced data is removed)
+	_, err = client.FlushIndex(context.Background(), 0.1, false)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully set a verified entry: ('%s', '%s') @ tx %d\n", []byte("hello"), []byte("immutable world"), hdr.Id)
-
-	// read an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	entry, err := client.VerifiedGet(context.Background(), []byte("hello"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Sucessfully got verified entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+	fmt.Println("Index sucessfully flushed")
 }

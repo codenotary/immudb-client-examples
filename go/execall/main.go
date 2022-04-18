@@ -13,33 +13,48 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 package main
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/codenotary/immudb/pkg/api/schema"
 	"log"
-	"math"
 
-	immuclient "github.com/codenotary/immudb/pkg/client"
+	"github.com/codenotary/immudb/pkg/api/schema"
+	immudb "github.com/codenotary/immudb/pkg/client"
 )
 
+// Simple app using official go sdk for immudb
+
+// go run main.go
+
 func main() {
-	client, err := immuclient.NewImmuClient(immuclient.DefaultOptions())
-	if err != nil {
-		log.Fatal(err)
-	}
-	ctx := context.Background()
-	_, err = client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
+	// even though the server address and port are defaults, setting them as a reference
+	opts := immudb.DefaultOptions().WithAddress("127.0.0.1").WithPort(3322)
+
+	client := immudb.NewClient().WithOptions(opts)
+
+	// connect with immudb server (user, password, database)
+	err := client.OpenSession(context.Background(), []byte("immudb"), []byte("immudb"), "defaultdb")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	idx, _ := client.Set(ctx, []byte(`persistedKey`), []byte(`persistedVal`))
-	_, _ = client.Set(ctx, []byte(`persistedKey`), []byte(`persistedVal2`))
+	// ensure connection is closed
+	defer client.CloseSession(context.Background())
+
+	ctx := context.Background()
+
+	idx, err := client.Set(ctx, []byte(`persistedKey`), []byte(`persistedVal`))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = client.Set(ctx, []byte(`persistedKey`), []byte(`persistedVal2`))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Ops payload
 	aOps := &schema.ExecAllRequest{
@@ -73,21 +88,22 @@ func main() {
 			},
 		},
 	}
-
-	idx, err = client.ExecAll(ctx, aOps)
+	_, err = client.ExecAll(ctx, aOps)
 	if err != nil {
 		log.Fatal(err)
 	}
-	zscanOpts1 := &schema.ZScanRequest{
-		Set:     []byte(`mySet`),
-		SinceTx: math.MaxUint64,
-		NoWait:  true,
-	}
 
-	list, err := client.ZScan(ctx, zscanOpts1)
+	list, err := client.ZScan(ctx, &schema.ZScanRequest{
+		Set: []byte(`mySet`),
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	s, _ := json.MarshalIndent(list, "", "\t")
+
+	s, err := json.MarshalIndent(list, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Print(string(s))
 }
