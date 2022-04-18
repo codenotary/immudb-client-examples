@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/codenotary/immudb/pkg/api/schema"
 	immudb "github.com/codenotary/immudb/pkg/client"
 )
 
@@ -42,19 +43,28 @@ func main() {
 	// ensure connection is closed
 	defer client.CloseSession(context.Background())
 
-	// write an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	hdr, err := client.VerifiedSet(context.Background(), []byte("hello"), []byte("immutable world"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Sucessfully set a verified entry: ('%s', '%s') @ tx %d\n", []byte("hello"), []byte("immutable world"), hdr.Id)
+	// write some entries
+	for _, keyPrefix := range []string{"a", "b", "c"} {
+		for i := 0; i < 3; i++ {
+			key := []byte(fmt.Sprintf("%s_%d", keyPrefix, i))
+			value := []byte(fmt.Sprintf("val_%s_%d", keyPrefix, i))
 
-	// read an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	entry, err := client.VerifiedGet(context.Background(), []byte("hello"))
+			_, err = client.Set(context.Background(), key, value)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+
+	// scan over all keys with prefix "b" i.e. "b_0", "b_1" and "b_2"
+	resp, err := client.Scan(context.Background(), &schema.ScanRequest{
+		Prefix: []byte("b"),
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully got verified entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+
+	for _, entry := range resp.Entries {
+		fmt.Printf("Got entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+	}
 }

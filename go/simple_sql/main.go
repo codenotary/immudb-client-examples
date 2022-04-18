@@ -42,19 +42,29 @@ func main() {
 	// ensure connection is closed
 	defer client.CloseSession(context.Background())
 
-	// write an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	hdr, err := client.VerifiedSet(context.Background(), []byte("hello"), []byte("immutable world"))
+	_, err = client.SQLExec(context.Background(), `
+		BEGIN TRANSACTION;
+          CREATE TABLE IF NOT EXISTS people(id INTEGER, name VARCHAR[50], salary INTEGER, PRIMARY KEY id);
+          CREATE INDEX IF NOT EXISTS ON people(name);
+		COMMIT;
+	`, map[string]interface{}{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully set a verified entry: ('%s', '%s') @ tx %d\n", []byte("hello"), []byte("immutable world"), hdr.Id)
+	fmt.Printf("Sucessfully created table and index\n")
 
-	// read an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	entry, err := client.VerifiedGet(context.Background(), []byte("hello"))
+	_, err = client.SQLExec(context.Background(), "UPSERT INTO people(id, name, salary) VALUES (@id, @name, @salary);", map[string]interface{}{"id": 1, "name": "Joe", "salary": 1000})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully got verified entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+	fmt.Printf("Sucessfully row insertion\n")
+
+	res, err := client.SQLQuery(context.Background(), "SELECT t.id as d,t.name FROM people AS t WHERE id <= 3 AND name = @name", map[string]interface{}{"name": "Joe"}, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, row := range res.Rows {
+		log.Printf("Got row: %v\n", row)
+	}
 }

@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/codenotary/immudb/pkg/api/schema"
 	immudb "github.com/codenotary/immudb/pkg/client"
 )
 
@@ -42,19 +43,38 @@ func main() {
 	// ensure connection is closed
 	defer client.CloseSession(context.Background())
 
-	// write an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	hdr, err := client.VerifiedSet(context.Background(), []byte("hello"), []byte("immutable world"))
+	// write some entries
+	hdr, err := client.SetAll(context.Background(), &schema.SetRequest{
+		KVs: []*schema.KeyValue{
+			{
+				Key:   []byte("key1"),
+				Value: []byte("value1"),
+			},
+			{
+				Key:   []byte("key2"),
+				Value: []byte("value2"),
+			},
+		},
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully set a verified entry: ('%s', '%s') @ tx %d\n", []byte("hello"), []byte("immutable world"), hdr.Id)
+	fmt.Printf("Sucessfully commit transaction %d with %d entries\n", hdr.Id, hdr.Nentries)
 
-	// read an entry
-	// upon submission, the SDK validates proofs and updates the local state under the hood
-	entry, err := client.VerifiedGet(context.Background(), []byte("hello"))
+	// read tx entries as structured values
+	tx, err := client.TxByIDWithSpec(context.Background(), &schema.TxRequest{
+		Tx: hdr.Id,
+		EntriesSpec: &schema.EntriesSpec{
+			KvEntriesSpec: &schema.EntryTypeSpec{
+				Action: schema.EntryTypeAction_RESOLVE,
+			},
+		},
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sucessfully got verified entry: ('%s', '%s') @ tx %d\n", entry.Key, entry.Value, entry.Tx)
+
+	for _, entry := range tx.KvEntries {
+		fmt.Printf("Got entry: ('%s', '%s')\n", entry.Key, entry.Value)
+	}
 }

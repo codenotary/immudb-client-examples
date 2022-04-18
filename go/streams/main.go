@@ -13,33 +13,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 package main
 
 import (
 	"bytes"
 	"context"
 	"crypto/rand"
-	"github.com/codenotary/immudb/pkg/api/schema"
-	"github.com/codenotary/immudb/pkg/stream"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 
-	immuclient "github.com/codenotary/immudb/pkg/client"
+	"github.com/codenotary/immudb/pkg/api/schema"
+	immudb "github.com/codenotary/immudb/pkg/client"
+	"github.com/codenotary/immudb/pkg/stream"
 )
 
+// Simple app using official go sdk for immudb
+
+// go run main.go
+
 func main() {
-	client, err := immuclient.NewImmuClient(immuclient.DefaultOptions().WithStreamChunkSize(4096))
+	// even though the server address and port are defaults, setting them as a reference
+	opts := immudb.DefaultOptions().WithAddress("127.0.0.1").WithPort(3322)
+
+	client := immudb.NewClient().WithOptions(opts)
+
+	// connect with immudb server (user, password, database)
+	err := client.OpenSession(context.Background(), []byte("immudb"), []byte("immudb"), "defaultdb")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// ensure connection is closed
+	defer client.CloseSession(context.Background())
+
 	ctx := context.Background()
-	_, err = client.Login(ctx, []byte(`immudb`), []byte(`immudb`))
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	// first key/value pair with simple values
 	key1 := []byte("key1")
@@ -103,6 +112,9 @@ func main() {
 
 	sc := client.GetServiceClient()
 	gs, err := sc.StreamGet(ctx, &schema.KeyRequest{Key: []byte(tmpfile.Name())})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	kvr := stream.NewKvStreamReceiver(stream.NewMsgReceiver(gs), stream.DefaultChunkSize)
 
@@ -123,5 +135,4 @@ func main() {
 		}
 		log.Printf("read value chunk: %d byte\n", l)
 	}
-
 }
