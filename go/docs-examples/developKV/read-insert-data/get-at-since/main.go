@@ -27,6 +27,11 @@ func main() {
 		txIDs = append(txIDs, txID.Id)
 	}
 
+	otherTxID, err := client.Set(context.TODO(), []byte(`other`), []byte(`other`))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Without verification
 	entry, err := client.GetSince(context.TODO(), key, txIDs[0])
 	if err != nil {
@@ -41,10 +46,10 @@ func main() {
 	}
 	log.Printf("VerifiedGetSince second: %+v", entry)
 
-	// GetAt non existing txID
-	_, err = client.GetAt(context.TODO(), key, txIDs[0]-1)
+	// GetAt txID after inserting other data
+	_, err = client.GetAt(context.TODO(), key, otherTxID.Id)
 	if err == nil {
-		log.Fatalf("Got value for not existing transaction, %+v", entry)
+		log.Fatalf("This should not happen, %+v", entry)
 	}
 
 	// Without verification
@@ -61,9 +66,9 @@ func main() {
 	}
 	log.Printf("VerifiedGetAt third: %+v", entry)
 
-	// VerifiedGetAt non existing txID
-	entry, err = client.VerifiedGetAt(context.TODO(), key, txIDs[2]+1)
+	// VerifiedGetAt txID after inserting other data
+	entry, err = client.VerifiedGetAt(context.TODO(), key, otherTxID.Id)
 	if err == nil {
-		log.Fatalf("Got value for not existing transaction, %+v", entry)
+		log.Fatalf("This should not happen, %+v", entry)
 	}
 }

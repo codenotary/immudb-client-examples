@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
+	"github.com/codenotary/immudb/pkg/api/schema"
 	immudb "github.com/codenotary/immudb/pkg/client"
 )
 
@@ -18,17 +18,15 @@ func main() {
 
 	defer client.CloseSession(context.TODO())
 
-	tx, err := client.Set(context.TODO(), []byte(`hello`), []byte(`immutable world`))
+	tx, err := client.SetAll(context.TODO(), &schema.SetRequest{
+		KVs: []*schema.KeyValue{
+			{Key: []byte(`1`), Value: []byte(`key1`)},
+			{Key: []byte(`2`), Value: []byte(`key2`)},
+			{Key: []byte(`3`), Value: []byte(`key3`)},
+		},
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("Successfully committed tx %d\n", tx.Id)
-
-	entry, err := client.Get(context.TODO(), []byte(`hello`))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("Successfully retrieved entry: %v\n", entry)
+	log.Printf("SetAll: tx: %d", tx.Id)
 }
