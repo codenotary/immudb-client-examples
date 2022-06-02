@@ -5,7 +5,7 @@ These samples use the [official immudb Java client] (`immudb4j`).
 [Official immudb Java client]: https://github.com/codenotary/immudb4j
 
 Besides what exists here, you can find additional code snippets and examples in:
-- [SDKs API](https://docs.immudb.io/master/sdks-api.html) documentation page
+- [SDKs API](https://docs.immudb.io/master/develop/reading.html) documentation page
 - [immudb4j Unit Tests](https://github.com/codenotary/immudb4j/tree/master/src/test/java/io/codenotary/immudb4j)
 
 <br/>
