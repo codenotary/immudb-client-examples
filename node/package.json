@@ -13,7 +13,7 @@
         "batch-operations": "ts-node batch-operations"
     },
     "dependencies": {
-        "immudb-node": "1.1.0",
+        "immudb-node": "1.1.1",
         "ts-node": "latest",
         "typescript": "latest"
     }
