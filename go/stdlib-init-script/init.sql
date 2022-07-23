@@ -1,0 +1,22 @@
+CREATE DATABASE IF NOT EXISTS db1;
+
+USE db1;
+
+BEGIN TRANSACTION;
+
+CREATE TABLE IF NOT EXISTS table1(
+		id INTEGER,
+		title VARCHAR[100],
+		active BOOLEAN NOT NULL,
+		PRIMARY KEY id
+);
+
+CREATE INDEX IF NOT EXISTS ON table1(title);
+
+INSERT INTO table1(id, title, active)
+VALUES 
+	(1, 'title1', true),
+	(2, 'title2', false)
+ON CONFLICT DO NOTHING;
+
+COMMIT;
