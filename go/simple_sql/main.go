@@ -59,19 +59,27 @@ func main() {
 	}
 	fmt.Printf("Sucessfully created table and index\n")
 
-	_, err = client.SQLExec(context.Background(), "UPSERT INTO people(id, name, salary) VALUES (@id, @name, @salary);", map[string]interface{}{"id": 1, "name": "Joe", "salary": 1000})
+	var params map[string]interface{}
+
+	params = make(map[string]interface{})
+	params["id"] = 1
+	params["name"] = "Joe"
+	params["salary"] = 1000
+	_, err = client.SQLExec(context.Background(), "UPSERT INTO people(id, name, salary) VALUES (@id, @name, @salary);", params)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = client.SQLExec(context.Background(), "UPSERT INTO people(id, name, salary) VALUES (@id, @name, @salary);", map[string]interface{}{"id": 2, "name": "John", "salary": 1200})
+	params = map[string]interface{}{"id": 2, "name": "John", "salary": 1200}
+	_, err = client.SQLExec(context.Background(), "UPSERT INTO people(id, name, salary) VALUES (@id, @name, @salary);", params)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Printf("Sucessfully row insertion\n")
 
-	res, err := client.SQLQuery(context.Background(), "SELECT t.id as d,t.name, t.salary FROM people AS t WHERE id <= @maxId", map[string]interface{}{"maxId": 2}, true)
+	params = map[string]interface{}{"maxId": 2}
+	res, err := client.SQLQuery(context.Background(), "SELECT t.id as d,t.name, t.salary FROM people AS t WHERE id <= @maxId", params, true)
 	if err != nil {
 		log.Fatal(err)
 	}
