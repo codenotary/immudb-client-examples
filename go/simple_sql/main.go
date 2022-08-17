@@ -27,6 +27,12 @@ import (
 
 // go run main.go
 
+type person struct {
+	id     int64
+	name   string
+	salary int64
+}
+
 func main() {
 	// even though the server address and port are defaults, setting them as a reference
 	opts := immudb.DefaultOptions().WithAddress("127.0.0.1").WithPort(3322)
@@ -57,14 +63,30 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	_, err = client.SQLExec(context.Background(), "UPSERT INTO people(id, name, salary) VALUES (@id, @name, @salary);", map[string]interface{}{"id": 2, "name": "John", "salary": 1200})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Printf("Sucessfully row insertion\n")
 
-	res, err := client.SQLQuery(context.Background(), "SELECT t.id as d,t.name FROM people AS t WHERE id <= 3 AND name = @name", map[string]interface{}{"name": "Joe"}, true)
+	res, err := client.SQLQuery(context.Background(), "SELECT t.id as d,t.name, t.salary FROM people AS t WHERE id <= @maxId", map[string]interface{}{"maxId": 2}, true)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, row := range res.Rows {
 		log.Printf("Got row: %v\n", row)
+
+		vals := row.GetValues()
+
+		p := person{
+			id:     vals[0].GetN(),
+			name:   vals[1].GetS(),
+			salary: vals[2].GetN(),
+		}
+
+		log.Printf("Interpreated as person: %v\n", p)
 	}
 }
