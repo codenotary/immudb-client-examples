@@ -28,12 +28,12 @@ class Program
                 .WithStatesFolder("immudb/states")
                 .build();
 
-        var client = ImmuClient.Builder()
+        var client = ImmuClient.NewBuilder()
             .WithStateHolder(stateHolder)
             .WithServerUrl("localhost")
             .WithServerPort(3322)
             .Build();
-        await client.Open("immudb", "immudb", "defaultdb");        
+        await client.Open("immudb", "immudb", "defaultdb");
 
         string key = "hello";
 
@@ -110,6 +110,6 @@ class Program
         Console.WriteLine($"Results of 'zScan', record 2: ({Encoding.UTF8.GetString(zScan[1].Key)},{string.Join(" ", zScan[1].Entry.Value)})\n");
 
         await client.Close();
-        await client.Connection.Pool.Shutdown();
+        await ImmuClient.ReleaseSdkResources();
     }
 }

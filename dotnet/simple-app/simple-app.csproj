@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImmuDB4Net" Version="1.0.0" />
+    <PackageReference Include="ImmuDB4Net" Version="1.0.5" />
   </ItemGroup>
 
 </Project>
