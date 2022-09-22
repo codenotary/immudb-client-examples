@@ -41,7 +41,7 @@ class Program
         try
         {
             // Setting (adding) a key-value.
-            await client.Set(key, "");
+            await client.Set(key, "test");
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
@@ -65,7 +65,7 @@ class Program
         try
         {
             // Setting (adding) a key-value.
-            await client.Set(key, "");
+            await client.Set(key, "immutable world!");
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
@@ -90,7 +90,7 @@ class Program
         try
         {
             // Setting (adding) a key-value.
-            await client.Set(key, "");
+            await client.Set(key, "immutable world!");
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
