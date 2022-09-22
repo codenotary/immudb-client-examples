@@ -24,12 +24,90 @@ class Program
 {
     public static async Task Main(string[] args)
     {
-        FileImmuStateHolder stateHolder = FileImmuStateHolder.NewBuilder()
-                .WithStatesFolder("immudb/states")
-                .build();
+        await InitializeExample();
+        await AnotherInitializeExample();
+        await MiscFunctionsUsageExample();
+        await ImmuClient.ReleaseSdkResources();
+    }
 
+    private static async Task InitializeExample()
+    {
+        var client = ImmuClient.NewBuilder().Build();
+        await client.Open("immudb", "immudb", "defaultdb");
+
+        string key = "hello";
+
+        try
+        {
+            // Setting (adding) a key-value.
+            await client.Set(key, "");
+
+            // Getting it back, by key (in a verified way that reports any tampering if it happened).
+            Entry entry = await client.VerifiedGet(key);
+            Console.WriteLine($"{key}, {entry.Value.ToString()}");
+        }
+        catch (VerificationException e)
+        {
+            // VerificationException means Data Tampering detected!
+            // This means the history of changes has been tampered.
+            Console.WriteLine(e.ToString());
+        }
+
+        await client.Close();
+    }
+    
+    private static async Task AnotherInitializeExample()
+    {
+        var client = await ImmuClient.NewBuilder().Open();
+        string key = "hello";
+
+        try
+        {
+            // Setting (adding) a key-value.
+            await client.Set(key, "");
+
+            // Getting it back, by key (in a verified way that reports any tampering if it happened).
+            Entry entry = await client.VerifiedGet(key);
+            Console.WriteLine($"{key}, {entry.ToString()}");
+        }
+        catch (VerificationException e)
+        {
+            // VerificationException means Data Tampering detected!
+            // This means the history of changes has been tampered.
+            Console.WriteLine(e.ToString());
+        }
+
+        await client.Close();
+    }
+
+    private static async Task YetAnotherInitializeExample()
+    {
+        var client = new ImmuClient();
+        await client.Open("immudb", "immudb", "defaultdb");
+        string key = "hello";
+
+        try
+        {
+            // Setting (adding) a key-value.
+            await client.Set(key, "");
+
+            // Getting it back, by key (in a verified way that reports any tampering if it happened).
+            Entry entry = await client.VerifiedGet(key);
+            Console.WriteLine($"{key}, {entry.ToString()}");
+        }
+        catch (VerificationException e)
+        {
+            // VerificationException means Data Tampering detected!
+            // This means the history of changes has been tampered.
+            Console.WriteLine(e.ToString());
+        }
+
+        await client.Close();
+    }
+
+    private static async Task MiscFunctionsUsageExample()
+    {
         var client = ImmuClient.NewBuilder()
-            .WithStateHolder(stateHolder)
             .WithServerUrl("localhost")
             .WithServerPort(3322)
             .Build();
@@ -40,12 +118,11 @@ class Program
         try
         {
             // Setting (adding) a key-value.
-            await client.Set(key, Encoding.UTF8.GetBytes("immutable world!"));
+            await client.Set(key, "immutable world!");
 
-            // Getting it back, by key (in a verified way
-            // that reports any tampering if it happened).
+            // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
-            Console.WriteLine($"({key}, {Encoding.UTF8.GetString(entry.Value)})\n");
+            Console.WriteLine($"({key}, {entry.ToString()})\n");
         }
         catch (VerificationException e)
         {
@@ -110,6 +187,7 @@ class Program
         Console.WriteLine($"Results of 'zScan', record 2: ({Encoding.UTF8.GetString(zScan[1].Key)},{string.Join(" ", zScan[1].Entry.Value)})\n");
 
         await client.Close();
-        await ImmuClient.ReleaseSdkResources();
     }
+    
+    
 }
