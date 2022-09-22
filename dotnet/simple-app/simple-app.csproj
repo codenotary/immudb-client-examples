@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImmuDB4Net" Version="1.0.5-rc" />
+    <!-- Set the desired version below -->
+    <PackageReference Include="ImmuDB4Net" Version="1.0.5-rc3" />
   </ItemGroup>
 
 </Project>

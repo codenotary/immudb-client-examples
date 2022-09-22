@@ -17,6 +17,7 @@ limitations under the License.
 using System.Text;
 using ImmuDB;
 using ImmuDB.Exceptions;
+using ImmuDB.SQL;
 
 namespace simple_app;
 
@@ -24,14 +25,15 @@ class Program
 {
     public static async Task Main(string[] args)
     {
-        await InitializeExample();
-        await AnotherInitializeExample();
-        await YetAnotherInitializeExample();
-        await MiscFunctionsUsageExample();
+        await OpenConnectionExample();
+        await AnotherOpenConnectionExample();
+        await GetSetScanUsageExample();
+        await SetAllGetAllExample();
+        await SqlUsageExample();
         await ImmuClient.ReleaseSdkResources();
     }
 
-    private static async Task InitializeExample()
+    private static async Task OpenConnectionExample()
     {
         var client = ImmuClient.NewBuilder().Build();
         await client.Open("immudb", "immudb", "defaultdb");
@@ -40,8 +42,7 @@ class Program
 
         try
         {
-            // Setting (adding) a key-value.
-            await client.Set(key, "test");
+            await client.VerifiedSet(key, "immutable world!");
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
@@ -56,8 +57,8 @@ class Program
 
         await client.Close();
     }
-    
-    private static async Task AnotherInitializeExample()
+
+    private static async Task AnotherOpenConnectionExample()
     {
         var client = await ImmuClient.NewBuilder().Open();
         string key = "hello";
@@ -65,7 +66,7 @@ class Program
         try
         {
             // Setting (adding) a key-value.
-            await client.Set(key, "immutable world!");
+            await client.VerifiedSet(key, "immutable world!");
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
@@ -81,20 +82,41 @@ class Program
         await client.Close();
     }
 
-    private static async Task YetAnotherInitializeExample()
+    private static async Task SetAllGetAllExample()
     {
         var client = new ImmuClient();
         await client.Open("immudb", "immudb", "defaultdb");
-        string key = "hello";
+
 
         try
         {
-            // Setting (adding) a key-value.
-            await client.Set(key, "immutable world!");
+            List<string> keys = new List<string>();
+            keys.Add("k0");
+            keys.Add("k1");
 
-            // Getting it back, by key (in a verified way that reports any tampering if it happened).
-            Entry entry = await client.VerifiedGet(key);
-            Console.WriteLine($"{key}, {entry.ToString()}");
+            List<byte[]> values = new List<byte[]>();
+            values.Add(new byte[] { 0, 1, 0, 1 });
+            values.Add(new byte[] { 1, 0, 1, 0 });
+
+            List<KVPair> kvListBuilder = new List<KVPair>();
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                kvListBuilder.Add(new KVPair(keys[i], values[i]));
+            }
+
+            await client.SetAll(kvListBuilder);
+
+            List<Entry> getAllResult = await client.GetAll(keys);
+
+
+            for (int i = 0; i < getAllResult.Count; i++)
+            {
+                Entry entry = getAllResult[i];
+                Console.WriteLine($"({string.Join(" ", entry.Key)}, {keys[i]}):({string.Join(" ", entry.Value)}, {string.Join(" ", values[i])})");
+            }
+
+            await client.Close();
         }
         catch (VerificationException e)
         {
@@ -106,7 +128,8 @@ class Program
         await client.Close();
     }
 
-    private static async Task MiscFunctionsUsageExample()
+
+    private static async Task GetSetScanUsageExample()
     {
         var client = ImmuClient.NewBuilder()
             .WithServerUrl("localhost")
@@ -189,6 +212,24 @@ class Program
 
         await client.Close();
     }
-    
-    
+
+    private static async Task SqlUsageExample()
+    {
+        var client = new ImmuClient();
+        await client.Open("immudb", "immudb", "defaultdb");
+
+        await client.SQLExec("CREATE TABLE IF NOT EXISTS logs(id INTEGER AUTO_INCREMENT, created TIMESTAMP, entry VARCHAR, PRIMARY KEY id)");
+        await client.SQLExec("CREATE INDEX IF NOT EXISTS ON logs(created)");
+        var rspInsert = await client.SQLExec("INSERT INTO logs(created, entry) VALUES($1, $2)",
+                SQLParameter.Create(DateTime.UtcNow),
+                SQLParameter.Create("hello immutable world"));
+        var queryResult = await client.SQLQuery("SELECT created, entry FROM LOGS order by created DESC");
+        var sqlVal = queryResult.Rows[0]["entry"];
+        
+        Console.WriteLine($"The log entry is: {sqlVal.Value}");
+
+        await client.Close();
+    }
+
+
 }
