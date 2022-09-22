@@ -26,6 +26,7 @@ class Program
     {
         await InitializeExample();
         await AnotherInitializeExample();
+        await YetAnotherInitializeExample();
         await MiscFunctionsUsageExample();
         await ImmuClient.ReleaseSdkResources();
     }
