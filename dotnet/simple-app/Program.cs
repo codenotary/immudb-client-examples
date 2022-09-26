@@ -50,7 +50,7 @@ class Program
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
-            Console.WriteLine($"{key}, {entry.Value.ToString()}");
+            Console.WriteLine($"{key}, {entry.ToString()}");
         }
         catch (VerificationException e)
         {
