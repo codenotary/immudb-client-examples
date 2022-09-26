@@ -30,6 +30,10 @@ class Program
         await GetSetScanUsageExample();
         await SetAllGetAllExample();
         await SqlUsageExample();
+
+        SyncOpenConnectionExample();
+        SyncSqlUsageExample();
+
         await ImmuClient.ReleaseSdkResources();
     }
 
@@ -54,8 +58,31 @@ class Program
             // This means the history of changes has been tampered.
             Console.WriteLine(e.ToString());
         }
-
         await client.Close();
+    }
+    
+    private static void SyncOpenConnectionExample()
+    {
+        var client = ImmuClientSync.NewBuilder().Build();
+        client.Open("immudb", "immudb", "defaultdb");
+
+        string key = "hello";
+
+        try
+        {
+            client.VerifiedSet(key, "immutable world!");
+
+            // Getting it back, by key (in a verified way that reports any tampering if it happened).
+            Entry entry = client.VerifiedGet(key);
+            Console.WriteLine($"{key}, {entry.ToString()}");
+        }
+        catch (VerificationException e)
+        {
+            // VerificationException means Data Tampering detected!
+            // This means the history of changes has been tampered.
+            Console.WriteLine(e.ToString());
+        }
+        client.Close();
     }
 
     private static async Task AnotherOpenConnectionExample()
@@ -104,7 +131,6 @@ class Program
             {
                 kvListBuilder.Add(new KVPair(keys[i], values[i]));
             }
-
             await client.SetAll(kvListBuilder);
 
             List<Entry> getAllResult = await client.GetAll(keys);
@@ -226,10 +252,28 @@ class Program
         var queryResult = await client.SQLQuery("SELECT created, entry FROM LOGS order by created DESC");
         var sqlVal = queryResult.Rows[0]["entry"];
         
-        Console.WriteLine($"The log entry is: {sqlVal.Value}");
+        Console.WriteLine($"The log entry is: {sqlVal.Value.ToString()}");
 
         await client.Close();
     }
+    
+    private static void SyncSqlUsageExample()
+    {
+        var client = new ImmuClientSync();
+        client.Open("immudb", "immudb", "defaultdb");
 
+        client.SQLExec("CREATE TABLE IF NOT EXISTS logs(id INTEGER AUTO_INCREMENT, created TIMESTAMP, entry VARCHAR, PRIMARY KEY id)");
+        client.SQLExec("CREATE INDEX IF NOT EXISTS ON logs(created)");
+        var rspInsert = client.SQLExec("INSERT INTO logs(created, entry) VALUES($1, $2)",
+                SQLParameter.Create(DateTime.UtcNow),
+                SQLParameter.Create("hello immutable world"));
+        var queryResult = client.SQLQuery("SELECT created, entry FROM LOGS order by created DESC");
+        var sqlVal = queryResult.Rows[0]["entry"];
+        
+        Console.WriteLine($"The log entry is: {sqlVal.Value.ToString()}");
 
+        client.Close();
+    }
+
+    
 }
