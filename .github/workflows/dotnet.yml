@@ -1,0 +1,23 @@
+name: immudb examples .NET
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - '**'
+jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    services:
+      immudb:
+        image: codenotary/immudb:latest
+        ports:
+        - 3322:3322
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run examples
+      uses: docker://mcr.microsoft.com/dotnet/sdk:6.0-focal
+      with:
+        entrypoint: /bin/bash
+        args: -c "for dir in $GITHUB_WORKSPACE/dotnet/*/; do pushd $dir && dotnet restore && dotnet build && dotnet run && popd; done"
