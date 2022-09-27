@@ -21,3 +21,5 @@ jobs:
       with:
         entrypoint: /bin/bash
         args: -c "for dir in $GITHUB_WORKSPACE/java/*/; do pushd $dir && gradle run && popd; done"
+      env:
+        IMMUDB_ADDRESS: immudb

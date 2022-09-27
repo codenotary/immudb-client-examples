@@ -31,13 +31,21 @@ public class App {
 
         ImmuClient client = null;
 
+        String immudbAddr = "127.0.0.1";
+
         try {
+
+            String immuAddrEnv = System.getenv("IMMUDB_ADDRESS");
+            if((immuAddrEnv != null) && !immuAddrEnv.isEmpty()) {
+                immudbAddr = immuAddrEnv;
+            }
+        
             FileImmuStateHolder stateHolder = FileImmuStateHolder.newBuilder()
                     .withStatesFolder("./immudb_states")
                     .build();
 
             client = ImmuClient.newBuilder()
-                    .withServerUrl("127.0.0.1")
+                    .withServerUrl(immudbAddr)
                     .withServerPort(3322)
                     .withStateHolder(stateHolder)
                     .build();
