@@ -21,3 +21,5 @@ jobs:
       with:
         entrypoint: /bin/bash
         args: -c "for dir in $GITHUB_WORKSPACE/dotnet/*/; do pushd $dir && dotnet restore && dotnet build && dotnet run && popd; done"
+      env:
+        IMMUDB_ADDRESS: immudb

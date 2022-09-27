@@ -23,8 +23,14 @@ namespace simple_app;
 
 class Program
 {
+    private static string immudbServerAddress = "localhost";
+    
     public static async Task Main(string[] args)
     {
+        string? envAddr = Environment.GetEnvironmentVariable("IMMUDB_ADDRESS");
+        if(!string.IsNullOrEmpty(envAddr)) {
+            immudbServerAddress = envAddr;
+        }
         await OpenConnectionExample();
         await AnotherOpenConnectionExample();
         await GetSetScanUsageExample();
@@ -39,7 +45,7 @@ class Program
 
     private static async Task OpenConnectionExample()
     {
-        var client = ImmuClient.NewBuilder().Build();
+        var client = ImmuClient.NewBuilder().WithServerUrl(immudbServerAddress).Build();
         await client.Open("immudb", "immudb", "defaultdb");
 
         string key = "hello";
@@ -63,7 +69,7 @@ class Program
     
     private static void SyncOpenConnectionExample()
     {
-        var client = ImmuClientSync.NewBuilder().Build();
+        var client = ImmuClientSync.NewBuilder().WithServerUrl(immudbServerAddress).Build();
         client.Open("immudb", "immudb", "defaultdb");
 
         string key = "hello";
@@ -87,7 +93,7 @@ class Program
 
     private static async Task AnotherOpenConnectionExample()
     {
-        var client = await ImmuClient.NewBuilder().Open();
+        var client = await ImmuClient.NewBuilder().WithServerUrl(immudbServerAddress).Open();
         string key = "hello";
 
         try
@@ -111,7 +117,7 @@ class Program
 
     private static async Task SetAllGetAllExample()
     {
-        var client = new ImmuClient();
+        var client = new ImmuClient(immudbServerAddress, 3322);
         await client.Open("immudb", "immudb", "defaultdb");
 
 
@@ -135,7 +141,6 @@ class Program
 
             List<Entry> getAllResult = await client.GetAll(keys);
 
-
             for (int i = 0; i < getAllResult.Count; i++)
             {
                 Entry entry = getAllResult[i];
@@ -158,7 +163,7 @@ class Program
     private static async Task GetSetScanUsageExample()
     {
         var client = ImmuClient.NewBuilder()
-            .WithServerUrl("localhost")
+            .WithServerUrl(immudbServerAddress)
             .WithServerPort(3322)
             .Build();
         await client.Open("immudb", "immudb", "defaultdb");
@@ -169,6 +174,8 @@ class Program
         {
             // Setting (adding) a key-value.
             await client.Set(key, "immutable world!");
+            var immuWorldVal = await client.Get(key);
+            Console.WriteLine($"{key} : {immuWorldVal.ToString()}");
 
             // Getting it back, by key (in a verified way that reports any tampering if it happened).
             Entry entry = await client.VerifiedGet(key);
@@ -241,7 +248,7 @@ class Program
 
     private static async Task SqlUsageExample()
     {
-        var client = new ImmuClient();
+        var client = new ImmuClient(immudbServerAddress, 3322);
         await client.Open("immudb", "immudb", "defaultdb");
 
         await client.SQLExec("CREATE TABLE IF NOT EXISTS logs(id INTEGER AUTO_INCREMENT, created TIMESTAMP, entry VARCHAR, PRIMARY KEY id)");
@@ -253,14 +260,13 @@ class Program
         var sqlVal = queryResult.Rows[0]["entry"];
         
         Console.WriteLine($"The log entry is: {sqlVal.Value.ToString()}");
-
         await client.Close();
     }
     
     private static void SyncSqlUsageExample()
     {
-        var client = new ImmuClientSync();
-        client.Open("immudb", "immudb", "defaultdb");
+        var client = new ImmuClientSync(immudbServerAddress, 3322);
+        client.Open("immudb", "immudb", "defaultdb");        
 
         client.SQLExec("CREATE TABLE IF NOT EXISTS logs(id INTEGER AUTO_INCREMENT, created TIMESTAMP, entry VARCHAR, PRIMARY KEY id)");
         client.SQLExec("CREATE INDEX IF NOT EXISTS ON logs(created)");
@@ -271,7 +277,6 @@ class Program
         var sqlVal = queryResult.Rows[0]["entry"];
         
         Console.WriteLine($"The log entry is: {sqlVal.Value.ToString()}");
-
         client.Close();
     }
 
