@@ -146,8 +146,6 @@ class Program
                 Entry entry = getAllResult[i];
                 Console.WriteLine($"({string.Join(" ", entry.Key)}, {keys[i]}):({string.Join(" ", entry.Value)}, {string.Join(" ", values[i])})");
             }
-
-            await client.Close();
         }
         catch (VerificationException e)
         {
@@ -251,7 +249,13 @@ class Program
         var client = new ImmuClient(immudbServerAddress, 3322);
         await client.Open("immudb", "immudb", "defaultdb");
 
-        await client.SQLExec("CREATE TABLE IF NOT EXISTS logs(id INTEGER AUTO_INCREMENT, created TIMESTAMP, entry VARCHAR, PRIMARY KEY id)");
+        await client.SQLExec(
+            @"CREATE TABLE IF NOT EXISTS logs(
+                id INTEGER AUTO_INCREMENT, 
+                created TIMESTAMP, 
+                entry VARCHAR, 
+                PRIMARY KEY id
+            )");
         await client.SQLExec("CREATE INDEX IF NOT EXISTS ON logs(created)");
         var rspInsert = await client.SQLExec("INSERT INTO logs(created, entry) VALUES($1, $2)",
                 SQLParameter.Create(DateTime.UtcNow),
@@ -279,6 +283,4 @@ class Program
         Console.WriteLine($"The log entry is: {sqlVal.Value.ToString()}");
         client.Close();
     }
-
-    
 }
