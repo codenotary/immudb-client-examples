@@ -7,11 +7,12 @@ This Git repository is a central repository for examples using official immudb c
 Examples (Python, Go, CLI) are tested against [immudb:latest](https://hub.docker.com/r/codenotary/immudb) container.
 
 More documentation at:
--[Go](https://docs.immudb.io/master/)
--[Java](https://github.com/codenotary/immudb4j)
--[.NET](https://github.com/codenotary/immudb4net)
--[Python](https://github.com/codenotary/immudb-py)
--[Node.js](https://github.com/codenotary/immudb-node)
+
+- [Go](https://docs.immudb.io/master/)
+- [Java](https://github.com/codenotary/immudb4j)
+- [.NET](https://github.com/codenotary/immudb4net)
+- [Python](https://github.com/codenotary/immudb-py)
+- [Node.js](https://github.com/codenotary/immudb-node)
 
 We're actively working on the implementation of immudb clients for different languages.
 
