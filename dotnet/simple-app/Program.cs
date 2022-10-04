@@ -272,7 +272,12 @@ class Program
         var client = new ImmuClientSync(immudbServerAddress, 3322);
         client.Open("immudb", "immudb", "defaultdb");        
 
-        client.SQLExec("CREATE TABLE IF NOT EXISTS logs(id INTEGER AUTO_INCREMENT, created TIMESTAMP, entry VARCHAR, PRIMARY KEY id)");
+        client.SQLExec(@"CREATE TABLE IF NOT EXISTS logs(
+            id INTEGER AUTO_INCREMENT, 
+            created TIMESTAMP, 
+            entry VARCHAR, 
+            PRIMARY KEY id
+        )");
         client.SQLExec("CREATE INDEX IF NOT EXISTS ON logs(created)");
         var rspInsert = client.SQLExec("INSERT INTO logs(created, entry) VALUES($1, $2)",
                 SQLParameter.Create(DateTime.UtcNow),
