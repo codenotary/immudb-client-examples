@@ -1,4 +1,4 @@
-name: immudb examples Java
+name: immudb examples .NET
 on:
   push:
     branches:
@@ -17,9 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run examples
-      uses: docker://gradle:jdk11
+      uses: docker://mcr.microsoft.com/dotnet/sdk:6.0-focal
       with:
         entrypoint: /bin/bash
-        args: -c "for dir in $GITHUB_WORKSPACE/java/*/; do pushd $dir && gradle run && popd; done"
+        args: -c "for dir in $GITHUB_WORKSPACE/dotnet/*/; do pushd $dir && dotnet restore && dotnet build && dotnet run && popd; done"
       env:
         IMMUDB_ADDRESS: immudb
