@@ -17,7 +17,6 @@ limitations under the License.
 package io.codenotary.immudb.helloworld;
 
 import io.codenotary.immudb4j.*;
-import io.codenotary.immudb4j.exceptions.CorruptedDataException;
 import io.codenotary.immudb4j.exceptions.VerificationException;
 
 import java.io.IOException;
@@ -50,9 +49,7 @@ public class App {
                     .withStateHolder(stateHolder)
                     .build();
 
-            client.login("immudb", "immudb");
-
-            client.useDatabase("defaultdb");
+            client.openSession("defaultdb", "immudb", "immudb");
 
             String key = "hello";
 
@@ -93,16 +90,16 @@ public class App {
             }
 
             // History operations.
-            client.set("history", new byte[]{1, 2, 3});
-            client.set("history", new byte[]{3, 2, 1});
+            client.set("hKey", new byte[]{1, 2, 3});
+            client.set("hKey", new byte[]{3, 2, 1});
 
-            List<Entry> history = client.history("history", 10, 0, false);
+            List<Entry> history = client.historyAll("hKey", 0, false, 10);
 
-            System.out.format("History of 'history', entry 1: (%s, %s)\n",
+            System.out.format("History of 'hKey', entry 1: (%s, %s)\n",
                     new String(history.get(0).getKey()),
                     Arrays.toString(history.get(0).getValue())
             );
-            System.out.format("History of 'history', entry 2: (%s, %s)\n",
+            System.out.format("History of 'hKey', entry 2: (%s, %s)\n",
                     new String(history.get(1).getKey()),
                     Arrays.toString(history.get(1).getValue())
             );
@@ -118,7 +115,7 @@ public class App {
 
             // scan is usually done by a prefix.
             // Of course, we can scan by a complete key name.
-            List<Entry> scan = client.scan(prefix, 2, false);
+            List<Entry> scan = client.scanAll(prefix, false, 2);
 
             System.out.format("Scan results of '%s', entry 1: (%s, %s)\n",
                     prefix,
@@ -139,7 +136,7 @@ public class App {
 
             // Here, we do a zScan providing the `sinceTxId` which should be
             // the latest transaction id we are interested in being considered.
-            List<ZEntry> zScan = client.zScan(set, 10, false);
+            List<ZEntry> zScan = client.zScanAll(set, false, 10);
 
             System.out.format("Results of 'zScan', record 1: (%s, %s)\n",
                     new String(zScan.get(0).getKey()),
@@ -150,11 +147,11 @@ public class App {
                     Arrays.toString(zScan.get(1).getEntry().getValue())
             );
 
-        } catch (IOException | CorruptedDataException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (client != null) {
-                client.logout();
+                client.closeSession();
             }
         }
 
