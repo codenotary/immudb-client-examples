@@ -16,10 +16,12 @@ limitations under the License.
 
 package io.codenotary.immudb.helloworld;
 
-import io.codenotary.immudb4j.*;
+import io.codenotary.immudb4j.Entry;
+import io.codenotary.immudb4j.FileImmuStateHolder;
+import io.codenotary.immudb4j.ImmuClient;
+import io.codenotary.immudb4j.ZEntry;
 import io.codenotary.immudb4j.exceptions.VerificationException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +95,7 @@ public class App {
             client.set("hKey", new byte[]{1, 2, 3});
             client.set("hKey", new byte[]{3, 2, 1});
 
-            List<Entry> history = client.historyAll("hKey", 0, false, 10);
+            List<Entry> history = client.historyAll("hKey", false, 0, 10);
 
             System.out.format("History of 'hKey', entry 1: (%s, %s)\n",
                     new String(history.get(0).getKey()),
