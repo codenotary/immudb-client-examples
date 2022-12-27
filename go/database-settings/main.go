@@ -88,7 +88,7 @@ func main() {
 		},
 		ReadTxPoolSize:  &schema.NullableUint32{Value: 1_000},
 		SyncFrequency:   &schema.NullableMilliseconds{Value: 20},
-		WriteBufferSize: &schema.NullableUint32{Value: 4096},
+		WriteBufferSize: &schema.NullableUint32{Value: 16_777_216},
 		AhtSettings: &schema.AHTNullableSettings{
 			SyncThreshold:   &schema.NullableUint32{Value: 10_000_000},
 			WriteBufferSize: &schema.NullableUint32{Value: 4096},
@@ -99,9 +99,9 @@ func main() {
 	if config.CreateDatabase {
 		// below settings can only be set at database creation
 		dbSettings.FileSize = &schema.NullableUint32{Value: 1 << 30} //1024Mb
-		dbSettings.MaxKeyLen = &schema.NullableUint32{Value: 32}
+		dbSettings.MaxKeyLen = &schema.NullableUint32{Value: 40}
 		dbSettings.MaxValueLen = &schema.NullableUint32{Value: 256}
-		dbSettings.MaxTxEntries = &schema.NullableUint32{Value: 10}
+		dbSettings.MaxTxEntries = &schema.NullableUint32{Value: 1024}
 
 		dbSettings.IndexSettings.MaxNodeSize = &schema.NullableUint32{Value: 16384} // 16Kb
 
