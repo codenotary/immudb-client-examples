@@ -30,12 +30,18 @@ import (
 // e.g. ./db_settings -db=mydb -create=false
 
 var config struct {
-	Addr           string
-	Port           int
-	Username       string
-	Password       string
-	DBName         string
-	CreateDatabase bool
+	Addr            string
+	Port            int
+	Username        string
+	Password        string
+	DBName          string
+	CreateDatabase  bool
+	Replica         bool
+	PrimaryUser     string
+	PrimaryPassword string
+	PrimaryDB       string
+	PrimaryHost     string
+	PrimaryPort     int
 }
 
 func init() {
@@ -45,6 +51,13 @@ func init() {
 	flag.StringVar(&config.Password, "pass", "immudb", "Password for authenticating to immudb")
 	flag.StringVar(&config.DBName, "db", "defaultdb", "Name of the database to use")
 	flag.BoolVar(&config.CreateDatabase, "create", true, "Create database")
+
+	flag.BoolVar(&config.Replica, "replica", false, "Create a sync replica")
+	flag.StringVar(&config.PrimaryUser, "primary-user", "immudb", "Username for authenticating to primary immudb")
+	flag.StringVar(&config.PrimaryPassword, "primary-pass", "immudb", "Password for authenticating to primary immudb")
+	flag.StringVar(&config.PrimaryDB, "primary-db", "primary-db", "Name of the primary database to replicate")
+	flag.StringVar(&config.PrimaryHost, "primary-addr", "127.0.0.1", "IP address of primary immudb server")
+	flag.IntVar(&config.PrimaryPort, "primary-port", 3322, "Port number of immudb server")
 	flag.Parse()
 }
 
@@ -60,11 +73,20 @@ func main() {
 	}
 
 	defer client.CloseSession(context.Background())
-
+	var repl schema.ReplicationNullableSettings = schema.ReplicationNullableSettings{
+		Replica: &schema.NullableBool{Value: false},
+	}
+	if config.Replica {
+		repl.Replica.Value = true
+		repl.SyncReplication = &schema.NullableBool{Value: true}
+		repl.PrimaryDatabase = &schema.NullableString{Value: config.PrimaryDB}
+		repl.PrimaryHost = &schema.NullableString{Value: config.PrimaryHost}
+		repl.PrimaryPort = &schema.NullableUint32{Value: uint32(config.PrimaryPort)}
+		repl.PrimaryUsername = &schema.NullableString{Value: config.PrimaryUser}
+		repl.PrimaryPassword = &schema.NullableString{Value: config.PrimaryPassword}
+	}
 	dbSettings := &schema.DatabaseNullableSettings{
-		ReplicationSettings: &schema.ReplicationNullableSettings{
-			Replica: &schema.NullableBool{Value: false},
-		},
+		ReplicationSettings:     &repl,
 		ExcludeCommitTime:       &schema.NullableBool{Value: false},
 		MaxConcurrency:          &schema.NullableUint32{Value: 1_000},
 		MaxIOConcurrency:        &schema.NullableUint32{Value: 1},
