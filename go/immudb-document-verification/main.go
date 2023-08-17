@@ -19,12 +19,12 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
-	"github.com/codenotary/immudb/pkg/api/authorizationschema"
-	"github.com/codenotary/immudb/pkg/api/documentschema"
+	"github.com/codenotary/immudb/pkg/api/authorization"
+	"github.com/codenotary/immudb/pkg/api/documents"
 	"github.com/codenotary/immudb/pkg/api/schema"
 	"github.com/codenotary/immudb/pkg/verification"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -38,7 +38,7 @@ var sessionID string
 
 func main() {
 	// open session
-	openSessionResp := &authorizationschema.OpenSessionResponseV2{}
+	openSessionResp := &authorization.OpenSessionResponse{}
 
 	err := doHttpRequest(
 		http.MethodPost,
@@ -54,7 +54,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sessionID = openSessionResp.Token
+	sessionID = openSessionResp.SessionID
 
 	// create a collection
 	err = doHttpRequest(
@@ -62,20 +62,27 @@ func main() {
 		"collections/create",
 		[]byte(`{
 			"name": "mycollection",
-			"indexKeys": {
-			  "attribute1": {
-				"type": "STRING",
-				"isUnique": true
+			"_idFieldName": "_docid", // rethink naming
+			"fields": {
+				"field1": {
+				  "type": "STRING"
+				},
+				"field2": {
+				  "type": "INTEGER"
+				},
+				"field3": {
+				  "type": "DOUBLE"
+				}
 			  },
-			  "attribute2": {
-				"type": "INTEGER",
-				"isUnique": false
-			  },
-			  "attribute3": {
-				"type": "DOUBLE",
-				"isUnique": false
-			  }
-			}
+			  "indexes": [
+				{
+				  "fields":	["field1"],
+				  "isUnique": true
+				},
+				{
+				  "fields":	["field2", "field3"]
+				}
+			  ]
 		  }`),
 		nil,
 	)
@@ -104,7 +111,7 @@ func main() {
 	}
 
 	// fetch a document
-	documentSearchResp := &documentschema.DocumentSearchResponse{}
+	documentSearchResp := &documents.DocumentSearchResponse{}
 
 	err = doHttpRequest(
 		http.MethodPost,
@@ -123,8 +130,8 @@ func main() {
 
 	var knownState *schema.ImmutableState
 
-	for _, doc := range documentSearchResp.Results {
-		docID := doc.Fields["_id"].GetStringValue()
+	for _, rev := range documentSearchResp.Revisions {
+		docID := rev.Document.Fields["_id"].GetStringValue()
 
 		req := []byte(fmt.Sprintf(`{
 			"collection": "mycollection",
@@ -132,7 +139,7 @@ func main() {
 		}`, docID))
 
 		// request the proof for the document
-		proofResp := &documentschema.DocumentProofResponse{}
+		proofResp := &documents.DocumentProofResponse{}
 
 		err := doHttpRequest(
 			http.MethodPost,
@@ -145,7 +152,7 @@ func main() {
 		}
 
 		// validate proof
-		knownState, err = verification.VerifyDocument(context.Background(), proofResp, doc, knownState, nil)
+		knownState, err = verification.VerifyDocument(context.Background(), proofResp, rev.Document, knownState, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -179,7 +186,7 @@ func doHttpRequest(method string, url string, jsonBody []byte, resp protoreflect
 		return nil
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
