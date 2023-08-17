@@ -4,7 +4,10 @@ go 1.19
 
 replace github.com/codenotary/immudb => /Users/jero/go/github.com/codenotary/immudb
 
-require github.com/codenotary/immudb v1.4.1
+require (
+	github.com/codenotary/immudb v1.4.1
+	google.golang.org/protobuf v1.28.0
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -25,5 +28,4 @@ require (
 	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	google.golang.org/grpc v1.46.2 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
 )
