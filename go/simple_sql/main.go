@@ -25,7 +25,9 @@ import (
 
 // Simple app using official go sdk for immudb
 
-// go run main.go
+// go mod tidy
+// go build
+// ./sdk-sql
 
 type person struct {
 	id     int64
