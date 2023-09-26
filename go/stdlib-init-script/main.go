@@ -3,8 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
 	_ "github.com/codenotary/immudb/pkg/stdlib"
 )
@@ -18,7 +18,7 @@ func main() {
 	defer db.Close()
 
 	// read some initialization sql script from a file
-	bs, err := ioutil.ReadFile("init.sql")
+	bs, err := os.ReadFile("init.sql")
 	if err != nil {
 		log.Fatal(err)
 	}
