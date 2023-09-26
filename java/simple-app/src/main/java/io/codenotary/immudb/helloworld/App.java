@@ -150,8 +150,12 @@ public class App {
             client.beginTransaction();
 
             client.sqlExec(
-                    "CREATE TABLE IF NOT EXISTS mytable(id INTEGER, title VARCHAR[256], active BOOLEAN, PRIMARY KEY id)");
+                    "CREATE TABLE IF NOT EXISTS mytable(id INTEGER, title VARCHAR(256), active BOOLEAN, PRIMARY KEY id)");
 
+            client.commitTransaction();
+
+            client.beginTransaction();
+            
             final int rows = 10;
 
             for (int i = 0; i < rows; i++) {
