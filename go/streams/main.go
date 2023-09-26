@@ -20,7 +20,6 @@ import (
 	"context"
 	"crypto/rand"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -31,7 +30,9 @@ import (
 
 // Simple app using official go sdk for immudb
 
-// go run main.go
+// go mod tidy
+// go build
+// ./streams
 
 func main() {
 	// even though the server address and port are defaults, setting them as a reference
@@ -66,7 +67,7 @@ func main() {
 	}
 
 	// for the second key/value pair we will put the content of a file
-	tmpfile, err := ioutil.TempFile("", "example")
+	tmpfile, err := os.CreateTemp("", "example")
 	if err != nil {
 		log.Fatal(err)
 	}
