@@ -25,9 +25,10 @@ import (
 	immudb "github.com/codenotary/immudb/pkg/client"
 )
 
-// go build db_settings
+// go mod tidy
+// go build
 // ./db_settings -h
-// e.g. ./db_settings -db=mydb -create=false
+// e.g. ./db_settings -db=mydb -create=true
 
 var config struct {
 	Addr            string
