@@ -25,7 +25,9 @@ import (
 
 // Simple app using official go sdk for immudb
 
-// go run main.go
+// go mod tidy
+// go build
+// ./sql-stdlib
 
 func main() {
 	opts := immudb.DefaultOptions()
