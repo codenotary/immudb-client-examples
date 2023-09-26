@@ -31,7 +31,7 @@ import (
 )
 
 func main() {
-	connStr := "immudb://immudb:immudb@127.0.0.1:3322/todos?sslmode=disable"
+	connStr := "immudb://immudb:immudb@127.0.0.1:3322/defaultdb?sslmode=disable"
 
 	db, err := sql.Open("immudb", connStr)
 	if err != nil {
