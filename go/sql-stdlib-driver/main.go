@@ -23,17 +23,36 @@ import (
 	_ "github.com/codenotary/immudb/pkg/stdlib"
 )
 
+// go mod tidy
+// go build
+// ./sql-stdlib-driver
+
 func main() {
 	db, err := sql.Open("immudb", "immudb://immudb:immudb@127.0.0.1:3322/defaultdb?sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 
 	_, err = db.ExecContext(context.TODO(), "CREATE TABLE myTable(id INTEGER, name VARCHAR, PRIMARY KEY id)")
+	if err != nil {
+		panic(err)
+	}
+
 	_, err = db.ExecContext(context.TODO(), "INSERT INTO myTable (id, name) VALUES (1, 'immu1')")
+	if err != nil {
+		panic(err)
+	}
+
 	rows, err := db.QueryContext(context.TODO(), "SELECT * FROM myTable")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
 
 	var id uint64
 	var name string
-	defer rows.Close()
+
 	rows.Next()
 	err = rows.Scan(&id, &name)
 	if err != nil {
