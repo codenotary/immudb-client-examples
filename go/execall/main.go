@@ -27,7 +27,9 @@ import (
 
 // Simple app using official go sdk for immudb
 
-// go run main.go
+// go mod tidy
+// go build
+// ./execall
 
 func main() {
 	// even though the server address and port are defaults, setting them as a reference
