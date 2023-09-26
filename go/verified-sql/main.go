@@ -29,7 +29,9 @@ import (
 
 // Simple app using official go sdk for immudb
 
-// go run main.go
+// go mod tidy
+// go build
+// ./app
 
 func main() {
 	// even though the server address and port are defaults, setting them as a reference
@@ -91,9 +93,9 @@ func main() {
 	verifyRow := &schema.Row{
 		// Here are the column names, as a reminder you can get these out of a queryResult
 		Columns: []string{
-			"(defaultdb.healthchecks_two.id)",
-			"(defaultdb.healthchecks_two.name)",
-			"(defaultdb.healthchecks_two.was_successful)",
+			"(healthchecks_two.id)",
+			"(healthchecks_two.name)",
+			"(healthchecks_two.was_successful)",
 		},
 		// The values we are expecting to find
 		Values: []*schema.SQLValue{
