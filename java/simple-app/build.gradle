@@ -16,6 +16,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    implementation "io.codenotary:immudb4j:1.0.0"
+    implementation "io.codenotary:immudb4j:1.0.1"
 }
 
